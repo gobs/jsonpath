@@ -3,6 +3,12 @@ Minimalistic implementation of jsonpath, based on http://goessner.net/articles/J
 
 But a better grammar definition is [here](https://info.teradata.com/htmlpubs/DB_TTU_16_00/index.html#page/Teradata_Data_Types/B035-1150-160K/pkq1472240532839.html).
 
+## Documentation
+
+https://godoc.org/github.com/gobs/jsonpath
+
+## Usage
+
 Install:
 
     go get github.com/gobs/jsonpath
