@@ -154,34 +154,55 @@ func (p *Processor) Parse(expr string) error {
 	return p.err
 }
 
+type map_type = map[string]interface{}
+type array_type = []interface{}
+
 func (p *Processor) find(name string, j interface{}) (ret []interface{}) {
 	var a []interface{}
 
-	if aj, ok := j.([]interface{}); ok {
+	if aj, ok := j.(array_type); ok {
 		a = aj
 	} else {
-		a = []interface{}{j}
+		a = array_type{j}
 	}
 
 	for _, c := range a {
 		switch t := c.(type) {
-		case map[string]interface{}:
+		case map_type:
 			for k, v := range t {
-				if name == TOKEN_ANY || k == name {
+				if k == name {
 					ret = append(ret, v)
 				} else {
+					if name == TOKEN_ANY {
+						ret = append(ret, v)
+					}
+
 					res := p.find(name, v)
 					ret = append(ret, res...)
 				}
 			}
 
-		case []interface{}:
+		case array_type:
 			res := p.find(name, t)
 			ret = append(ret, res...)
 		}
 	}
 
 	return ret
+}
+
+func atIndex(i int, a array_type) (interface{}, bool) {
+	l := len(a)
+
+	if i < 0 {
+		i += l // start from the end
+	}
+
+	if i >= 0 && i < l {
+		return a[i], true
+	}
+
+	return nil, false
 }
 
 //
@@ -196,20 +217,22 @@ func (p *Processor) Process(v interface{}) interface{} {
 		v = j.Data()
 	}
 
-	for _, n := range p.Nodes {
+	last := len(p.Nodes) - 1
+
+	for s, n := range p.Nodes {
 		j := simplejson.AsJson(v)
 
 		switch n.nodeType {
 		case ARRAY_RANGE:
 			a := j.MustArray()
-			res := []interface{}{}
+			res := array_type{}
 			start, end, step := n.start, n.end, n.step
 
 			if end > len(a) {
 				end = len(a)
 			}
 			if start < 0 {
-				start = len(a) - start
+				start = len(a) + start
 			}
 
 			for i := start; i < end; i += step {
@@ -220,10 +243,10 @@ func (p *Processor) Process(v interface{}) interface{} {
 
 		case ARRAY_ITEMS:
 			a := j.MustArray()
-			res := []interface{}{}
+			res := array_type{}
 			for _, i := range n.indices {
-				if i >= 0 && i < len(a) {
-					res = append(res, a[i])
+				if v, ok := atIndex(i, a); ok {
+					res = append(res, v)
 				}
 			}
 
@@ -234,14 +257,14 @@ func (p *Processor) Process(v interface{}) interface{} {
 			}
 
 		case CHILD:
-			res := []interface{}{}
+			res := array_type{}
 			a, err := j.Array()
 			if err != nil {
-				a = []interface{}{j.Data()}
+				a = array_type{j.Data()}
 			}
 
 			for _, c := range a {
-				if m, ok := c.(map[string]interface{}); ok {
+				if m, ok := c.(map_type); ok {
 					if n.name == TOKEN_ANY {
 						for _, mv := range m {
 							res = append(res, mv)
@@ -262,9 +285,12 @@ func (p *Processor) Process(v interface{}) interface{} {
 
 		case DESCENDANT:
 			v = p.find(n.name, v)
+			if len(v.(array_type)) == 1 && s < last {
+				v = v.(array_type)[0]
+			}
 
 		case ALL_ITEMS:
-			res := []interface{}{}
+			res := array_type{}
 
 			if a, err := j.Array(); err == nil {
 				for _, v := range a {
