@@ -15,7 +15,7 @@ var _ = reflect.Copy
 var _ = strconv.Itoa
 
 var parserATN = []uint16{
-	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 25, 121,
+	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 24, 100,
 	4, 2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 4, 5, 9, 5, 4, 6, 9, 6, 4, 7, 9, 7,
 	4, 8, 9, 8, 4, 9, 9, 9, 4, 10, 9, 10, 4, 11, 9, 11, 4, 12, 9, 12, 4, 13,
 	9, 13, 3, 2, 3, 2, 3, 2, 3, 2, 3, 3, 6, 3, 32, 10, 3, 13, 3, 14, 3, 33,
@@ -24,59 +24,49 @@ var parserATN = []uint16{
 	7, 3, 7, 3, 7, 3, 7, 5, 7, 61, 10, 7, 5, 7, 63, 10, 7, 3, 8, 3, 8, 3, 8,
 	7, 8, 68, 10, 8, 12, 8, 14, 8, 71, 11, 8, 3, 9, 3, 9, 3, 10, 3, 10, 3,
 	11, 3, 11, 3, 11, 3, 11, 3, 12, 3, 12, 3, 12, 3, 12, 3, 13, 3, 13, 3, 13,
-	3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3,
-	13, 3, 13, 5, 13, 100, 10, 13, 3, 13, 3, 13, 3, 13, 6, 13, 105, 10, 13,
-	13, 13, 14, 13, 106, 3, 13, 3, 13, 3, 13, 6, 13, 112, 10, 13, 13, 13, 14,
-	13, 113, 7, 13, 116, 10, 13, 12, 13, 14, 13, 119, 11, 13, 3, 13, 2, 3,
-	24, 14, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 2, 3, 4, 2, 16, 16,
-	21, 22, 2, 128, 2, 26, 3, 2, 2, 2, 4, 31, 3, 2, 2, 2, 6, 37, 3, 2, 2, 2,
-	8, 39, 3, 2, 2, 2, 10, 42, 3, 2, 2, 2, 12, 54, 3, 2, 2, 2, 14, 64, 3, 2,
-	2, 2, 16, 72, 3, 2, 2, 2, 18, 74, 3, 2, 2, 2, 20, 76, 3, 2, 2, 2, 22, 80,
-	3, 2, 2, 2, 24, 99, 3, 2, 2, 2, 26, 27, 7, 3, 2, 2, 27, 28, 5, 4, 3, 2,
-	28, 29, 7, 2, 2, 3, 29, 3, 3, 2, 2, 2, 30, 32, 5, 6, 4, 2, 31, 30, 3, 2,
-	2, 2, 32, 33, 3, 2, 2, 2, 33, 31, 3, 2, 2, 2, 33, 34, 3, 2, 2, 2, 34, 5,
-	3, 2, 2, 2, 35, 38, 5, 8, 5, 2, 36, 38, 5, 10, 6, 2, 37, 35, 3, 2, 2, 2,
-	37, 36, 3, 2, 2, 2, 38, 7, 3, 2, 2, 2, 39, 40, 7, 20, 2, 2, 40, 41, 9,
-	2, 2, 2, 41, 9, 3, 2, 2, 2, 42, 49, 7, 4, 2, 2, 43, 50, 5, 18, 10, 2, 44,
-	50, 5, 12, 7, 2, 45, 50, 5, 14, 8, 2, 46, 50, 5, 16, 9, 2, 47, 50, 5, 20,
-	11, 2, 48, 50, 5, 22, 12, 2, 49, 43, 3, 2, 2, 2, 49, 44, 3, 2, 2, 2, 49,
-	45, 3, 2, 2, 2, 49, 46, 3, 2, 2, 2, 49, 47, 3, 2, 2, 2, 49, 48, 3, 2, 2,
-	2, 49, 50, 3, 2, 2, 2, 50, 51, 3, 2, 2, 2, 51, 52, 7, 5, 2, 2, 52, 11,
-	3, 2, 2, 2, 53, 55, 7, 17, 2, 2, 54, 53, 3, 2, 2, 2, 54, 55, 3, 2, 2, 2,
-	55, 56, 3, 2, 2, 2, 56, 62, 7, 6, 2, 2, 57, 60, 7, 17, 2, 2, 58, 59, 7,
-	6, 2, 2, 59, 61, 7, 17, 2, 2, 60, 58, 3, 2, 2, 2, 60, 61, 3, 2, 2, 2, 61,
-	63, 3, 2, 2, 2, 62, 57, 3, 2, 2, 2, 62, 63, 3, 2, 2, 2, 63, 13, 3, 2, 2,
-	2, 64, 69, 7, 17, 2, 2, 65, 66, 7, 7, 2, 2, 66, 68, 7, 17, 2, 2, 67, 65,
-	3, 2, 2, 2, 68, 71, 3, 2, 2, 2, 69, 67, 3, 2, 2, 2, 69, 70, 3, 2, 2, 2,
-	70, 15, 3, 2, 2, 2, 71, 69, 3, 2, 2, 2, 72, 73, 7, 19, 2, 2, 73, 17, 3,
-	2, 2, 2, 74, 75, 7, 21, 2, 2, 75, 19, 3, 2, 2, 2, 76, 77, 7, 8, 2, 2, 77,
-	78, 5, 24, 13, 2, 78, 79, 7, 9, 2, 2, 79, 21, 3, 2, 2, 2, 80, 81, 7, 10,
-	2, 2, 81, 82, 5, 24, 13, 2, 82, 83, 7, 9, 2, 2, 83, 23, 3, 2, 2, 2, 84,
-	85, 8, 13, 1, 2, 85, 100, 7, 21, 2, 2, 86, 87, 7, 13, 2, 2, 87, 100, 7,
-	16, 2, 2, 88, 89, 7, 13, 2, 2, 89, 90, 7, 16, 2, 2, 90, 91, 7, 24, 2, 2,
-	91, 100, 7, 18, 2, 2, 92, 93, 7, 14, 2, 2, 93, 94, 7, 23, 2, 2, 94, 100,
-	7, 17, 2, 2, 95, 96, 7, 13, 2, 2, 96, 97, 7, 16, 2, 2, 97, 98, 7, 15, 2,
-	2, 98, 100, 7, 19, 2, 2, 99, 84, 3, 2, 2, 2, 99, 86, 3, 2, 2, 2, 99, 88,
-	3, 2, 2, 2, 99, 92, 3, 2, 2, 2, 99, 95, 3, 2, 2, 2, 100, 117, 3, 2, 2,
-	2, 101, 104, 12, 9, 2, 2, 102, 103, 7, 11, 2, 2, 103, 105, 5, 24, 13, 2,
-	104, 102, 3, 2, 2, 2, 105, 106, 3, 2, 2, 2, 106, 104, 3, 2, 2, 2, 106,
-	107, 3, 2, 2, 2, 107, 116, 3, 2, 2, 2, 108, 111, 12, 8, 2, 2, 109, 110,
-	7, 12, 2, 2, 110, 112, 5, 24, 13, 2, 111, 109, 3, 2, 2, 2, 112, 113, 3,
-	2, 2, 2, 113, 111, 3, 2, 2, 2, 113, 114, 3, 2, 2, 2, 114, 116, 3, 2, 2,
-	2, 115, 101, 3, 2, 2, 2, 115, 108, 3, 2, 2, 2, 116, 119, 3, 2, 2, 2, 117,
-	115, 3, 2, 2, 2, 117, 118, 3, 2, 2, 2, 118, 25, 3, 2, 2, 2, 119, 117, 3,
-	2, 2, 2, 14, 33, 37, 49, 54, 60, 62, 69, 99, 106, 113, 115, 117,
+	3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 5,
+	13, 98, 10, 13, 3, 13, 2, 2, 14, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22,
+	24, 2, 3, 4, 2, 14, 14, 20, 21, 2, 102, 2, 26, 3, 2, 2, 2, 4, 31, 3, 2,
+	2, 2, 6, 37, 3, 2, 2, 2, 8, 39, 3, 2, 2, 2, 10, 42, 3, 2, 2, 2, 12, 54,
+	3, 2, 2, 2, 14, 64, 3, 2, 2, 2, 16, 72, 3, 2, 2, 2, 18, 74, 3, 2, 2, 2,
+	20, 76, 3, 2, 2, 2, 22, 80, 3, 2, 2, 2, 24, 97, 3, 2, 2, 2, 26, 27, 7,
+	3, 2, 2, 27, 28, 5, 4, 3, 2, 28, 29, 7, 2, 2, 3, 29, 3, 3, 2, 2, 2, 30,
+	32, 5, 6, 4, 2, 31, 30, 3, 2, 2, 2, 32, 33, 3, 2, 2, 2, 33, 31, 3, 2, 2,
+	2, 33, 34, 3, 2, 2, 2, 34, 5, 3, 2, 2, 2, 35, 38, 5, 8, 5, 2, 36, 38, 5,
+	10, 6, 2, 37, 35, 3, 2, 2, 2, 37, 36, 3, 2, 2, 2, 38, 7, 3, 2, 2, 2, 39,
+	40, 7, 19, 2, 2, 40, 41, 9, 2, 2, 2, 41, 9, 3, 2, 2, 2, 42, 49, 7, 4, 2,
+	2, 43, 50, 5, 18, 10, 2, 44, 50, 5, 12, 7, 2, 45, 50, 5, 14, 8, 2, 46,
+	50, 5, 16, 9, 2, 47, 50, 5, 20, 11, 2, 48, 50, 5, 22, 12, 2, 49, 43, 3,
+	2, 2, 2, 49, 44, 3, 2, 2, 2, 49, 45, 3, 2, 2, 2, 49, 46, 3, 2, 2, 2, 49,
+	47, 3, 2, 2, 2, 49, 48, 3, 2, 2, 2, 49, 50, 3, 2, 2, 2, 50, 51, 3, 2, 2,
+	2, 51, 52, 7, 5, 2, 2, 52, 11, 3, 2, 2, 2, 53, 55, 7, 15, 2, 2, 54, 53,
+	3, 2, 2, 2, 54, 55, 3, 2, 2, 2, 55, 56, 3, 2, 2, 2, 56, 62, 7, 6, 2, 2,
+	57, 60, 7, 15, 2, 2, 58, 59, 7, 6, 2, 2, 59, 61, 7, 15, 2, 2, 60, 58, 3,
+	2, 2, 2, 60, 61, 3, 2, 2, 2, 61, 63, 3, 2, 2, 2, 62, 57, 3, 2, 2, 2, 62,
+	63, 3, 2, 2, 2, 63, 13, 3, 2, 2, 2, 64, 69, 7, 15, 2, 2, 65, 66, 7, 7,
+	2, 2, 66, 68, 7, 15, 2, 2, 67, 65, 3, 2, 2, 2, 68, 71, 3, 2, 2, 2, 69,
+	67, 3, 2, 2, 2, 69, 70, 3, 2, 2, 2, 70, 15, 3, 2, 2, 2, 71, 69, 3, 2, 2,
+	2, 72, 73, 7, 17, 2, 2, 73, 17, 3, 2, 2, 2, 74, 75, 7, 20, 2, 2, 75, 19,
+	3, 2, 2, 2, 76, 77, 7, 8, 2, 2, 77, 78, 5, 24, 13, 2, 78, 79, 7, 9, 2,
+	2, 79, 21, 3, 2, 2, 2, 80, 81, 7, 10, 2, 2, 81, 82, 5, 24, 13, 2, 82, 83,
+	7, 9, 2, 2, 83, 23, 3, 2, 2, 2, 84, 85, 7, 11, 2, 2, 85, 98, 7, 14, 2,
+	2, 86, 87, 7, 11, 2, 2, 87, 88, 7, 14, 2, 2, 88, 89, 7, 23, 2, 2, 89, 98,
+	7, 16, 2, 2, 90, 91, 7, 12, 2, 2, 91, 92, 7, 22, 2, 2, 92, 98, 7, 15, 2,
+	2, 93, 94, 7, 11, 2, 2, 94, 95, 7, 14, 2, 2, 95, 96, 7, 13, 2, 2, 96, 98,
+	7, 18, 2, 2, 97, 84, 3, 2, 2, 2, 97, 86, 3, 2, 2, 2, 97, 90, 3, 2, 2, 2,
+	97, 93, 3, 2, 2, 2, 98, 25, 3, 2, 2, 2, 10, 33, 37, 49, 54, 60, 62, 69,
+	97,
 }
 var deserializer = antlr.NewATNDeserializer(nil)
 var deserializedATN = deserializer.DeserializeFromUInt16(parserATN)
 
 var literalNames = []string{
-	"", "'$'", "'['", "']'", "':'", "','", "'?('", "')'", "'('", "'&&'", "'||'",
-	"'@.'", "'@.length'", "'=~'", "", "", "", "", "", "'*'", "'length()'",
+	"", "'$'", "'['", "']'", "':'", "','", "'?('", "')'", "'('", "'@.'", "'@.length'",
+	"'=~'", "", "", "", "", "", "", "'*'", "'length()'",
 }
 var symbolicNames = []string{
-	"", "", "", "", "", "", "", "", "", "", "", "", "", "", "Identifier", "INT",
-	"NUMBER", "QUOTED", "DOTS", "STAR", "Length", "OP", "COMP", "WS",
+	"", "", "", "", "", "", "", "", "", "", "", "", "Identifier", "INT", "NUMBER",
+	"QUOTED", "REGEX", "DOTS", "STAR", "Length", "OP", "COMP", "WS",
 }
 
 var ruleNames = []string{
@@ -123,18 +113,17 @@ const (
 	JsonpathParserT__8       = 9
 	JsonpathParserT__9       = 10
 	JsonpathParserT__10      = 11
-	JsonpathParserT__11      = 12
-	JsonpathParserT__12      = 13
-	JsonpathParserIdentifier = 14
-	JsonpathParserINT        = 15
-	JsonpathParserNUMBER     = 16
-	JsonpathParserQUOTED     = 17
-	JsonpathParserDOTS       = 18
-	JsonpathParserSTAR       = 19
-	JsonpathParserLength     = 20
-	JsonpathParserOP         = 21
-	JsonpathParserCOMP       = 22
-	JsonpathParserWS         = 23
+	JsonpathParserIdentifier = 12
+	JsonpathParserINT        = 13
+	JsonpathParserNUMBER     = 14
+	JsonpathParserQUOTED     = 15
+	JsonpathParserREGEX      = 16
+	JsonpathParserDOTS       = 17
+	JsonpathParserSTAR       = 18
+	JsonpathParserLength     = 19
+	JsonpathParserOP         = 20
+	JsonpathParserCOMP       = 21
+	JsonpathParserWS         = 22
 )
 
 // JsonpathParser rules.
@@ -1376,7 +1365,7 @@ func (p *JsonpathParser) FilterExpr() (localctx IFilterExprContext) {
 	}
 	{
 		p.SetState(75)
-		p.queryExpr(0)
+		p.QueryExpr()
 	}
 	{
 		p.SetState(76)
@@ -1481,7 +1470,7 @@ func (p *JsonpathParser) ScriptExpr() (localctx IScriptExprContext) {
 	}
 	{
 		p.SetState(79)
-		p.queryExpr(0)
+		p.QueryExpr()
 	}
 	{
 		p.SetState(80)
@@ -1549,31 +1538,8 @@ func (s *QueryExprContext) INT() antlr.TerminalNode {
 	return s.GetToken(JsonpathParserINT, 0)
 }
 
-func (s *QueryExprContext) QUOTED() antlr.TerminalNode {
-	return s.GetToken(JsonpathParserQUOTED, 0)
-}
-
-func (s *QueryExprContext) AllQueryExpr() []IQueryExprContext {
-	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IQueryExprContext)(nil)).Elem())
-	var tst = make([]IQueryExprContext, len(ts))
-
-	for i, t := range ts {
-		if t != nil {
-			tst[i] = t.(IQueryExprContext)
-		}
-	}
-
-	return tst
-}
-
-func (s *QueryExprContext) QueryExpr(i int) IQueryExprContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IQueryExprContext)(nil)).Elem(), i)
-
-	if t == nil {
-		return nil
-	}
-
-	return t.(IQueryExprContext)
+func (s *QueryExprContext) REGEX() antlr.TerminalNode {
+	return s.GetToken(JsonpathParserREGEX, 0)
 }
 
 func (s *QueryExprContext) GetRuleContext() antlr.RuleContext {
@@ -1597,20 +1563,11 @@ func (s *QueryExprContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 func (p *JsonpathParser) QueryExpr() (localctx IQueryExprContext) {
-	return p.queryExpr(0)
-}
-
-func (p *JsonpathParser) queryExpr(_p int) (localctx IQueryExprContext) {
-	var _parentctx antlr.ParserRuleContext = p.GetParserRuleContext()
-	_parentState := p.GetState()
-	localctx = NewQueryExprContext(p, p.GetParserRuleContext(), _parentState)
-	var _prevctx IQueryExprContext = localctx
-	var _ antlr.ParserRuleContext = _prevctx // TODO: To prevent unused variable warning.
-	_startState := 22
-	p.EnterRecursionRule(localctx, 22, JsonpathParserRULE_queryExpr, _p)
+	localctx = NewQueryExprContext(p, p.GetParserRuleContext(), p.GetState())
+	p.EnterRule(localctx, 22, JsonpathParserRULE_queryExpr)
 
 	defer func() {
-		p.UnrollRecursionContexts(_parentctx)
+		p.ExitRule()
 	}()
 
 	defer func() {
@@ -1625,191 +1582,74 @@ func (p *JsonpathParser) queryExpr(_p int) (localctx IQueryExprContext) {
 		}
 	}()
 
-	var _alt int
-
-	p.EnterOuterAlt(localctx, 1)
-	p.SetState(97)
+	p.SetState(95)
 	p.GetErrorHandler().Sync(p)
 	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 7, p.GetParserRuleContext()) {
 	case 1:
+		p.EnterOuterAlt(localctx, 1)
+		{
+			p.SetState(82)
+			p.Match(JsonpathParserT__8)
+		}
 		{
 			p.SetState(83)
-			p.Match(JsonpathParserSTAR)
+			p.Match(JsonpathParserIdentifier)
 		}
 
 	case 2:
+		p.EnterOuterAlt(localctx, 2)
 		{
 			p.SetState(84)
-			p.Match(JsonpathParserT__10)
+			p.Match(JsonpathParserT__8)
 		}
 		{
 			p.SetState(85)
 			p.Match(JsonpathParserIdentifier)
 		}
-
-	case 3:
 		{
 			p.SetState(86)
-			p.Match(JsonpathParserT__10)
-		}
-		{
-			p.SetState(87)
-			p.Match(JsonpathParserIdentifier)
-		}
-		{
-			p.SetState(88)
 			p.Match(JsonpathParserCOMP)
 		}
 		{
-			p.SetState(89)
+			p.SetState(87)
 			p.Match(JsonpathParserNUMBER)
 		}
 
-	case 4:
+	case 3:
+		p.EnterOuterAlt(localctx, 3)
 		{
-			p.SetState(90)
-			p.Match(JsonpathParserT__11)
+			p.SetState(88)
+			p.Match(JsonpathParserT__9)
 		}
 		{
-			p.SetState(91)
+			p.SetState(89)
 			p.Match(JsonpathParserOP)
 		}
 		{
-			p.SetState(92)
+			p.SetState(90)
 			p.Match(JsonpathParserINT)
 		}
 
-	case 5:
+	case 4:
+		p.EnterOuterAlt(localctx, 4)
+		{
+			p.SetState(91)
+			p.Match(JsonpathParserT__8)
+		}
+		{
+			p.SetState(92)
+			p.Match(JsonpathParserIdentifier)
+		}
 		{
 			p.SetState(93)
 			p.Match(JsonpathParserT__10)
 		}
 		{
 			p.SetState(94)
-			p.Match(JsonpathParserIdentifier)
-		}
-		{
-			p.SetState(95)
-			p.Match(JsonpathParserT__12)
-		}
-		{
-			p.SetState(96)
-			p.Match(JsonpathParserQUOTED)
+			p.Match(JsonpathParserREGEX)
 		}
 
-	}
-	p.GetParserRuleContext().SetStop(p.GetTokenStream().LT(-1))
-	p.SetState(115)
-	p.GetErrorHandler().Sync(p)
-	_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 11, p.GetParserRuleContext())
-
-	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
-		if _alt == 1 {
-			if p.GetParseListeners() != nil {
-				p.TriggerExitRuleEvent()
-			}
-			_prevctx = localctx
-			p.SetState(113)
-			p.GetErrorHandler().Sync(p)
-			switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 10, p.GetParserRuleContext()) {
-			case 1:
-				localctx = NewQueryExprContext(p, _parentctx, _parentState)
-				p.PushNewRecursionContext(localctx, _startState, JsonpathParserRULE_queryExpr)
-				p.SetState(99)
-
-				if !(p.Precpred(p.GetParserRuleContext(), 7)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 7)", ""))
-				}
-				p.SetState(102)
-				p.GetErrorHandler().Sync(p)
-				_alt = 1
-				for ok := true; ok; ok = _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
-					switch _alt {
-					case 1:
-						{
-							p.SetState(100)
-							p.Match(JsonpathParserT__8)
-						}
-						{
-							p.SetState(101)
-							p.queryExpr(0)
-						}
-
-					default:
-						panic(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
-					}
-
-					p.SetState(104)
-					p.GetErrorHandler().Sync(p)
-					_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 8, p.GetParserRuleContext())
-				}
-
-			case 2:
-				localctx = NewQueryExprContext(p, _parentctx, _parentState)
-				p.PushNewRecursionContext(localctx, _startState, JsonpathParserRULE_queryExpr)
-				p.SetState(106)
-
-				if !(p.Precpred(p.GetParserRuleContext(), 6)) {
-					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 6)", ""))
-				}
-				p.SetState(109)
-				p.GetErrorHandler().Sync(p)
-				_alt = 1
-				for ok := true; ok; ok = _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
-					switch _alt {
-					case 1:
-						{
-							p.SetState(107)
-							p.Match(JsonpathParserT__9)
-						}
-						{
-							p.SetState(108)
-							p.queryExpr(0)
-						}
-
-					default:
-						panic(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
-					}
-
-					p.SetState(111)
-					p.GetErrorHandler().Sync(p)
-					_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 9, p.GetParserRuleContext())
-				}
-
-			}
-
-		}
-		p.SetState(117)
-		p.GetErrorHandler().Sync(p)
-		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 11, p.GetParserRuleContext())
 	}
 
 	return localctx
-}
-
-func (p *JsonpathParser) Sempred(localctx antlr.RuleContext, ruleIndex, predIndex int) bool {
-	switch ruleIndex {
-	case 11:
-		var t *QueryExprContext = nil
-		if localctx != nil {
-			t = localctx.(*QueryExprContext)
-		}
-		return p.QueryExpr_Sempred(t, predIndex)
-
-	default:
-		panic("No predicate with index: " + fmt.Sprint(ruleIndex))
-	}
-}
-
-func (p *JsonpathParser) QueryExpr_Sempred(localctx antlr.RuleContext, predIndex int) bool {
-	switch predIndex {
-	case 0:
-		return p.Precpred(p.GetParserRuleContext(), 7)
-
-	case 1:
-		return p.Precpred(p.GetParserRuleContext(), 6)
-
-	default:
-		panic("No predicate with index: " + fmt.Sprint(predIndex))
-	}
 }

@@ -38,13 +38,10 @@ filterExpr : '?(' queryExpr ')'
 scriptExpr : '(' queryExpr ')'
            ;
 
-queryExpr : queryExpr ('&&' queryExpr)+
-          | queryExpr ('||' queryExpr)+
-          | '*'
-          | '@.' Identifier
+queryExpr : '@.' Identifier
           | '@.' Identifier COMP NUMBER
           | '@.length' OP INT
-          | '@.' Identifier '=~' QUOTED
+          | '@.' Identifier '=~' REGEX
           ;
 
 Identifier : [a-zA-Z][a-zA-Z0-9_]*
@@ -58,6 +55,10 @@ NUMBER : '-'? ('0'..'9')+ ('.' ('0'..'9')+)?
 
 QUOTED : '\'' (~'\'')* '\''
        ;
+
+REGEX : QUOTED
+      | '/' (~'/')* '/' [imsU]*
+      ;
 
 DOTS : '.'
      | '..'
