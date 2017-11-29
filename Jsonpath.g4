@@ -52,7 +52,7 @@ queryExpr : queryExpr ('&&' queryExpr)+
           | '@.' Identifier '=~' QUOTED
           ;
 
-Identifier : [a-zA-Z][a-zA-Z0-9]*
+Identifier : [a-zA-Z][a-zA-Z0-9_]*
            ;
 
 INT : '-'? ('0'..'9')+

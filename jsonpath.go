@@ -26,7 +26,7 @@ const (
 	ARRAY_ITEMS
 	CHILD
 	DESCENDANT
-	ANY
+	ALL_ITEMS
 
 	MAX_RANGE = 0x7ffffff
 
@@ -48,6 +48,9 @@ func (n Node) String() string {
 
 	case ARRAY_ITEMS:
 		return fmt.Sprintf("ARRAY ITEMS %v", n.indices)
+
+	case ALL_ITEMS:
+		return "ALL_ITEMS"
 
 	case CHILD:
 		return fmt.Sprintf("CHILD %v", n.name)
@@ -129,6 +132,13 @@ func (p *Processor) ExitRangeExpr(ctx *parser.RangeExprContext) {
 //
 func (p *Processor) ExitNameExpr(ctx *parser.NameExprContext) {
 	p.addNode(Node{nodeType: CHILD, name: strings.Trim(ctx.QUOTED().GetText(), "'")})
+}
+
+//
+// ExitStarExpr is called when production starExpr is exited.
+//
+func (p *Processor) ExitStarExpr(ctx *parser.StarExprContext) {
+	p.addNode(Node{nodeType: ALL_ITEMS})
 }
 
 //
@@ -217,26 +227,58 @@ func (p *Processor) Process(v interface{}) interface{} {
 				}
 			}
 
-			v = res
+			if len(res) == 1 && len(n.indices) == 1 {
+				v = res[0]
+			} else {
+				v = res
+			}
 
 		case CHILD:
-			if a := j.GetIndex(0); !a.Nil() {
-				j = a
+			res := []interface{}{}
+			a, err := j.Array()
+			if err != nil {
+				a = []interface{}{j.Data()}
 			}
-			m := j.MustMap()
-			if n.name == TOKEN_ANY {
-				res := []interface{}{}
-				for _, mv := range m {
-					res = append(res, mv)
-				}
 
-				v = res
+			for _, c := range a {
+				if m, ok := c.(map[string]interface{}); ok {
+					if n.name == TOKEN_ANY {
+						for _, mv := range m {
+							res = append(res, mv)
+						}
+					} else {
+						res = append(res, m[n.name])
+					}
+				} else if n.name == TOKEN_ANY {
+					res = append(res, c)
+				}
+			}
+
+			if len(res) == 1 {
+				v = res[0]
 			} else {
-				v = m[n.name]
+				v = res
 			}
 
 		case DESCENDANT:
 			v = p.find(n.name, v)
+
+		case ALL_ITEMS:
+			res := []interface{}{}
+
+			if a, err := j.Array(); err == nil {
+				for _, v := range a {
+					res = append(res, v)
+				}
+			} else if m, err := j.Map(); err == nil {
+				for _, v := range m {
+					res = append(res, v)
+				}
+			} else {
+				fmt.Printf("what is %T", j.Data())
+			}
+
+			v = res
 		}
 	}
 

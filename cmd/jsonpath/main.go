@@ -36,14 +36,21 @@ func main() {
 		return
 	}
 
-	f, err := os.Open(args[1])
-	if err != nil {
+        var inf *os.File
+
+        if args[1] == "--" { // read from stdin
+            inf = os.Stdin
+        } else {
+	    f, err := os.Open(args[1])
+	    if err != nil {
 		fatal(err)
-	}
+	    }
 
-	defer f.Close()
+	    defer f.Close()
+            inf = f
+        }
 
-	j, err := simplejson.Load(f)
+	j, err := simplejson.Load(inf)
 	if err != nil {
 		fatal(err)
 	}
