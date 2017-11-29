@@ -30,7 +30,8 @@ const (
 
 	MAX_RANGE = 0x7ffffff
 
-	TOKEN_ANY = "*"
+	TOKEN_ANY    = "*"
+	TOKEN_LENGTH = "!" // not a valid identifiers
 )
 
 // Node defines a processing node
@@ -94,6 +95,10 @@ func (p *Processor) ExitDotExpr(ctx *parser.DotExprContext) {
 
 	if ctx.Identifier() != nil {
 		name = ctx.Identifier().GetText()
+	}
+
+	if ctx.Length() != nil {
+		name = TOKEN_LENGTH
 	}
 
 	if ctx.DOTS().GetText() == ".." {
@@ -205,6 +210,17 @@ func atIndex(i int, a array_type) (interface{}, bool) {
 	return nil, false
 }
 
+func getLength(v interface{}) interface{} {
+	switch t := v.(type) {
+	case map_type:
+		return len(t)
+	case array_type:
+		return len(t)
+	default:
+		return nil
+	}
+}
+
 //
 // Process input object according to parsed JsonPath
 //
@@ -261,16 +277,25 @@ func (p *Processor) Process(v interface{}) interface{} {
 			a, err := j.Array()
 			if err != nil {
 				a = array_type{j.Data()}
+			} else if n.name == TOKEN_LENGTH {
+				res = append(res, getLength(a))
+				v = res
+				continue
 			}
 
 			for _, c := range a {
+				if n.name == TOKEN_LENGTH {
+					res = append(res, getLength(a))
+					continue
+				}
+
 				if m, ok := c.(map_type); ok {
 					if n.name == TOKEN_ANY {
 						for _, mv := range m {
 							res = append(res, mv)
 						}
-					} else {
-						res = append(res, m[n.name])
+					} else if v, ok := m[n.name]; ok {
+						res = append(res, v)
 					}
 				} else if n.name == TOKEN_ANY {
 					res = append(res, c)

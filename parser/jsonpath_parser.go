@@ -15,7 +15,7 @@ var _ = reflect.Copy
 var _ = strconv.Itoa
 
 var parserATN = []uint16{
-	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 24, 121,
+	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 25, 121,
 	4, 2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 4, 5, 9, 5, 4, 6, 9, 6, 4, 7, 9, 7,
 	4, 8, 9, 8, 4, 9, 9, 9, 4, 10, 9, 10, 4, 11, 9, 11, 4, 12, 9, 12, 4, 13,
 	9, 13, 3, 2, 3, 2, 3, 2, 3, 2, 3, 3, 6, 3, 32, 10, 3, 13, 3, 14, 3, 33,
@@ -29,7 +29,7 @@ var parserATN = []uint16{
 	13, 13, 14, 13, 106, 3, 13, 3, 13, 3, 13, 6, 13, 112, 10, 13, 13, 13, 14,
 	13, 113, 7, 13, 116, 10, 13, 12, 13, 14, 13, 119, 11, 13, 3, 13, 2, 3,
 	24, 14, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 2, 3, 4, 2, 16, 16,
-	21, 21, 2, 128, 2, 26, 3, 2, 2, 2, 4, 31, 3, 2, 2, 2, 6, 37, 3, 2, 2, 2,
+	21, 22, 2, 128, 2, 26, 3, 2, 2, 2, 4, 31, 3, 2, 2, 2, 6, 37, 3, 2, 2, 2,
 	8, 39, 3, 2, 2, 2, 10, 42, 3, 2, 2, 2, 12, 54, 3, 2, 2, 2, 14, 64, 3, 2,
 	2, 2, 16, 72, 3, 2, 2, 2, 18, 74, 3, 2, 2, 2, 20, 76, 3, 2, 2, 2, 22, 80,
 	3, 2, 2, 2, 24, 99, 3, 2, 2, 2, 26, 27, 7, 3, 2, 2, 27, 28, 5, 4, 3, 2,
@@ -53,8 +53,8 @@ var parserATN = []uint16{
 	78, 5, 24, 13, 2, 78, 79, 7, 9, 2, 2, 79, 21, 3, 2, 2, 2, 80, 81, 7, 10,
 	2, 2, 81, 82, 5, 24, 13, 2, 82, 83, 7, 9, 2, 2, 83, 23, 3, 2, 2, 2, 84,
 	85, 8, 13, 1, 2, 85, 100, 7, 21, 2, 2, 86, 87, 7, 13, 2, 2, 87, 100, 7,
-	16, 2, 2, 88, 89, 7, 13, 2, 2, 89, 90, 7, 16, 2, 2, 90, 91, 7, 23, 2, 2,
-	91, 100, 7, 18, 2, 2, 92, 93, 7, 14, 2, 2, 93, 94, 7, 22, 2, 2, 94, 100,
+	16, 2, 2, 88, 89, 7, 13, 2, 2, 89, 90, 7, 16, 2, 2, 90, 91, 7, 24, 2, 2,
+	91, 100, 7, 18, 2, 2, 92, 93, 7, 14, 2, 2, 93, 94, 7, 23, 2, 2, 94, 100,
 	7, 17, 2, 2, 95, 96, 7, 13, 2, 2, 96, 97, 7, 16, 2, 2, 97, 98, 7, 15, 2,
 	2, 98, 100, 7, 19, 2, 2, 99, 84, 3, 2, 2, 2, 99, 86, 3, 2, 2, 2, 99, 88,
 	3, 2, 2, 2, 99, 92, 3, 2, 2, 2, 99, 95, 3, 2, 2, 2, 100, 117, 3, 2, 2,
@@ -72,11 +72,11 @@ var deserializedATN = deserializer.DeserializeFromUInt16(parserATN)
 
 var literalNames = []string{
 	"", "'$'", "'['", "']'", "':'", "','", "'?('", "')'", "'('", "'&&'", "'||'",
-	"'@.'", "'@.length'", "'=~'", "", "", "", "", "", "'*'",
+	"'@.'", "'@.length'", "'=~'", "", "", "", "", "", "'*'", "'length()'",
 }
 var symbolicNames = []string{
 	"", "", "", "", "", "", "", "", "", "", "", "", "", "", "Identifier", "INT",
-	"NUMBER", "QUOTED", "DOTS", "STAR", "OP", "COMP", "WS",
+	"NUMBER", "QUOTED", "DOTS", "STAR", "Length", "OP", "COMP", "WS",
 }
 
 var ruleNames = []string{
@@ -131,9 +131,10 @@ const (
 	JsonpathParserQUOTED     = 17
 	JsonpathParserDOTS       = 18
 	JsonpathParserSTAR       = 19
-	JsonpathParserOP         = 20
-	JsonpathParserCOMP       = 21
-	JsonpathParserWS         = 22
+	JsonpathParserLength     = 20
+	JsonpathParserOP         = 21
+	JsonpathParserCOMP       = 22
+	JsonpathParserWS         = 23
 )
 
 // JsonpathParser rules.
@@ -555,6 +556,10 @@ func (s *DotExprContext) STAR() antlr.TerminalNode {
 	return s.GetToken(JsonpathParserSTAR, 0)
 }
 
+func (s *DotExprContext) Length() antlr.TerminalNode {
+	return s.GetToken(JsonpathParserLength, 0)
+}
+
 func (s *DotExprContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
@@ -604,7 +609,7 @@ func (p *JsonpathParser) DotExpr() (localctx IDotExprContext) {
 	p.SetState(38)
 	_la = p.GetTokenStream().LA(1)
 
-	if !(_la == JsonpathParserIdentifier || _la == JsonpathParserSTAR) {
+	if !(((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<JsonpathParserIdentifier)|(1<<JsonpathParserSTAR)|(1<<JsonpathParserLength))) != 0) {
 		p.GetErrorHandler().RecoverInline(p)
 	} else {
 		p.GetErrorHandler().ReportMatch(p)

@@ -19,7 +19,7 @@ nodeExpr : dotExpr
          | selectExpr
          ;
 
-dotExpr : DOTS (Identifier | STAR)
+dotExpr : DOTS (Identifier | STAR | Length)
         ;
 
 selectExpr : '[' (starExpr | rangeExpr | itemsExpr | nameExpr | filterExpr | scriptExpr)? ']'
@@ -70,6 +70,9 @@ DOTS : '.'
 
 STAR : '*'
      ;
+
+Length : 'length()'
+       ;
 
 OP : '+' | '-' | '/' | '*'
    ;
