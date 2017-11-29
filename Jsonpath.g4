@@ -39,18 +39,18 @@ scriptExpr : '(' queryExpr ')'
            ;
 
 queryExpr : '@.' exists=Identifier
-          | '@.' name=Identifier op=COMP value=NUMBER
+          | '@.' name=Identifier op=COMP value=(NUMBER | QUOTED)
           | '@.' name=Identifier op='=~' value=REGEX
           ;
 
 Identifier : [a-zA-Z][a-zA-Z0-9_]*
            ;
 
-INT : '-'? ('0'..'9')+
-    ;
-
 NUMBER : INT ('.' ('0'..'9')+)?
        ;
+
+INT : '-'? ('0'..'9')+
+    ;
 
 QUOTED : '\'' (~'\'')* '\''
        ;

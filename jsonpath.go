@@ -125,12 +125,18 @@ func (n Node) String() string {
 }
 
 func (n Node) CompareExists(v interface{}) bool {
-	if m, ok := v.(map_type); ok {
-		_, exists := m[n.name]
-		return exists
-	}
+	return true
 
-	return false
+	/*
+		         * this is done at the filter level
+		         *
+			if m, ok := v.(map_type); ok {
+				_, exists := m[n.name]
+				return exists
+			}
+
+			return false
+	*/
 }
 
 func (n Node) CompareEqual(v interface{}) bool {
@@ -358,14 +364,21 @@ func (p *Processor) ExitScriptExpr(ctx *parser.ScriptExprContext) {
 }
 
 func (p *Processor) addQueryNode(t nodeType, q parser.IQueryExprContext) {
-	n := Node{nodeType: t, opName: q.GetOp().GetText()}
+	n := Node{nodeType: t}
 
 	if q.GetExists() != nil {
 		n.name = q.GetExists().GetText()
 		n.op = n.CompareExists
+		n.opName = "exists"
 	} else {
 		n.name = q.GetName().GetText()
-		n.value = asFloat(q.GetValue(), 0.0)
+		n.opName = q.GetOp().GetText()
+
+		if q.(*parser.QueryExprContext).QUOTED() != nil {
+			n.value = strings.Trim(q.GetValue().GetText(), "'")
+		} else {
+			n.value = asFloat(q.GetValue(), 0.0)
+		}
 
 		switch n.opName {
 		case "==":
@@ -587,6 +600,30 @@ func (p *Processor) Process(v interface{}) interface{} {
 			}
 
 			v = res
+
+		case FILTER_EXPR:
+			res := array_type{}
+			a, err := j.Array()
+			if err != nil {
+				a = array_type{j.Data()}
+			}
+
+			for _, c := range a {
+				if m, ok := c.(map_type); ok {
+					if v, ok := m[n.name]; ok {
+						if n.op(v) {
+							res = append(res, m)
+						}
+					}
+				}
+			}
+
+			if len(res) == 1 {
+				v = res[0]
+			} else {
+				v = res
+			}
+
 		}
 	}
 
