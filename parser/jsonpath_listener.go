@@ -28,8 +28,8 @@ type JsonpathListener interface {
 	// EnterItemsExpr is called when entering the itemsExpr production.
 	EnterItemsExpr(c *ItemsExprContext)
 
-	// EnterNameExpr is called when entering the nameExpr production.
-	EnterNameExpr(c *NameExprContext)
+	// EnterNamesExpr is called when entering the namesExpr production.
+	EnterNamesExpr(c *NamesExprContext)
 
 	// EnterStarExpr is called when entering the starExpr production.
 	EnterStarExpr(c *StarExprContext)
@@ -64,8 +64,8 @@ type JsonpathListener interface {
 	// ExitItemsExpr is called when exiting the itemsExpr production.
 	ExitItemsExpr(c *ItemsExprContext)
 
-	// ExitNameExpr is called when exiting the nameExpr production.
-	ExitNameExpr(c *NameExprContext)
+	// ExitNamesExpr is called when exiting the namesExpr production.
+	ExitNamesExpr(c *NamesExprContext)
 
 	// ExitStarExpr is called when exiting the starExpr production.
 	ExitStarExpr(c *StarExprContext)

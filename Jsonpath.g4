@@ -17,7 +17,7 @@ nodeExpr : dotExpr
 dotExpr : DOTS (Identifier | STAR | Length)
         ;
 
-selectExpr : '[' (starExpr | rangeExpr | itemsExpr | nameExpr | filterExpr | scriptExpr)? ']'
+selectExpr : '[' (starExpr | rangeExpr | itemsExpr | namesExpr | filterExpr | scriptExpr)? ']'
            ;
 
 rangeExpr : (startIndex=INT)? ':' (endIndex=INT (':' step=INT)?)?
@@ -26,7 +26,7 @@ rangeExpr : (startIndex=INT)? ':' (endIndex=INT (':' step=INT)?)?
 itemsExpr : INT (',' INT)*
           ;
 
-nameExpr: QUOTED
+namesExpr: QUOTED (',' QUOTED)*
         ;
 
 starExpr : STAR

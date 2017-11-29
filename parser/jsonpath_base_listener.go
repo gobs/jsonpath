@@ -62,11 +62,11 @@ func (s *BaseJsonpathListener) EnterItemsExpr(ctx *ItemsExprContext) {}
 // ExitItemsExpr is called when production itemsExpr is exited.
 func (s *BaseJsonpathListener) ExitItemsExpr(ctx *ItemsExprContext) {}
 
-// EnterNameExpr is called when production nameExpr is entered.
-func (s *BaseJsonpathListener) EnterNameExpr(ctx *NameExprContext) {}
+// EnterNamesExpr is called when production namesExpr is entered.
+func (s *BaseJsonpathListener) EnterNamesExpr(ctx *NamesExprContext) {}
 
-// ExitNameExpr is called when production nameExpr is exited.
-func (s *BaseJsonpathListener) ExitNameExpr(ctx *NameExprContext) {}
+// ExitNamesExpr is called when production namesExpr is exited.
+func (s *BaseJsonpathListener) ExitNamesExpr(ctx *NamesExprContext) {}
 
 // EnterStarExpr is called when production starExpr is entered.
 func (s *BaseJsonpathListener) EnterStarExpr(ctx *StarExprContext) {}

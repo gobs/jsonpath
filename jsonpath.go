@@ -89,13 +89,14 @@ type Operation func(v interface{}) bool
 type Node struct {
 	nodeType nodeType
 
-	name   string      // for CHILD/DESCENDANT/FILTER_EXPR/SCRIPT_EXPR
+	name   string      // for DESCENDANT/FILTER_EXPR/SCRIPT_EXPR
 	value  interface{} // for FILTER_EXP/SCRIPT_EXPR
 	op     Operation
 	opName string // used for debugging
 
-	indices          []int // for ARRAY_ITEMS
-	start, end, step int   // for ARRAY_RANGE
+	names            []string // for CHILD
+	indices          []int    // for ARRAY_ITEMS
+	start, end, step int      // for ARRAY_RANGE
 }
 
 func (n Node) String() string {
@@ -110,10 +111,10 @@ func (n Node) String() string {
 		return "ALL_ITEMS"
 
 	case CHILD:
-		return fmt.Sprintf("CHILD %v", n.name)
+		return fmt.Sprintf("CHILD %v", n.names)
 
 	case DESCENDANT:
-		return fmt.Sprintf("DESCENDANT %v", n.name)
+		return fmt.Sprintf("DESCENDANT %v", n.names)
 
 	case FILTER_EXPR:
 		return fmt.Sprintf("FILTER %v %v %v", n.name, n.opName, n.value)
@@ -282,7 +283,7 @@ func (p *Processor) ExitDotExpr(ctx *parser.DotExprContext) {
 	}
 
 	if ctx.DOTS().GetText() == ".." {
-		p.addNode(&Node{nodeType: DESCENDANT, name: name})
+		p.addNode(&Node{nodeType: DESCENDANT, names: []string{name}})
 	} else {
 		p.addNode(&Node{nodeType: CHILD, name: name})
 	}
@@ -321,14 +322,20 @@ func (p *Processor) ExitRangeExpr(ctx *parser.RangeExprContext) {
 }
 
 //
-// ExitNameExpr is called when production nameExpr is exited.
+// ExitNamesExpr is called when production namesExpr is exited.
 //
-func (p *Processor) ExitNameExpr(ctx *parser.NameExprContext) {
+func (p *Processor) ExitNamesExpr(ctx *parser.NamesExprContext) {
 	if p.errors {
 		return
 	}
 
-	p.addNode(&Node{nodeType: CHILD, name: strings.Trim(ctx.QUOTED().GetText(), "'")})
+	n := Node{nodeType: CHILD}
+
+	for _, i := range ctx.AllQUOTED() {
+		n.names = append(n.names, strings.Trim(i.GetSymbol().GetText(), "'"))
+	}
+
+	p.addNode(&n)
 }
 
 //
@@ -577,8 +584,12 @@ func (p *Processor) Process(v interface{}) interface{} {
 						for _, mv := range m {
 							res = append(res, mv)
 						}
-					} else if v, ok := m[n.name]; ok {
-						res = append(res, v)
+					} else {
+						for _, nn := range n.names {
+							if v, ok := m[nn]; ok {
+								res = append(res, v)
+							}
+						}
 					}
 				} else if n.name == TOKEN_ANY {
 					res = append(res, c)
@@ -592,7 +603,7 @@ func (p *Processor) Process(v interface{}) interface{} {
 			}
 
 		case DESCENDANT:
-			v = p.find(n.name, v)
+			v = p.find(n.names[0], v)
 			if len(v.(array_type)) == 1 && s < last {
 				v = v.(array_type)[0]
 			}
