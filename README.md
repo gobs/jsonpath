@@ -24,8 +24,7 @@ And use it as a library:
         jsonpathexpr := "$.items[3].stuff"
 
         p := jsonpath.NewProcessor()
-        err := p.Parse(jsonpathexpr)
-        if err != nil {
+        if !p.Parse(jsonpathexpr) {
             return
         }
 
