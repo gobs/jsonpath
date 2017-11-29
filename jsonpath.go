@@ -175,7 +175,7 @@ func (p *Processor) find(name string, j interface{}) (ret []interface{}) {
 	}
 
 	for _, c := range a {
-		if addEle {
+		if addEle && name == TOKEN_ANY {
 			ret = append(ret, c)
 		}
 
