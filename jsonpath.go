@@ -165,13 +165,20 @@ type array_type = []interface{}
 func (p *Processor) find(name string, j interface{}) (ret []interface{}) {
 	var a []interface{}
 
+	addEle := true
+
 	if aj, ok := j.(array_type); ok {
 		a = aj
 	} else {
 		a = array_type{j}
+		addEle = false
 	}
 
 	for _, c := range a {
+		if addEle {
+			ret = append(ret, c)
+		}
+
 		switch t := c.(type) {
 		case map_type:
 			for k, v := range t {
