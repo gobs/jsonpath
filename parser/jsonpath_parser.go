@@ -15,57 +15,55 @@ var _ = reflect.Copy
 var _ = strconv.Itoa
 
 var parserATN = []uint16{
-	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 24, 100,
-	4, 2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 4, 5, 9, 5, 4, 6, 9, 6, 4, 7, 9, 7,
-	4, 8, 9, 8, 4, 9, 9, 9, 4, 10, 9, 10, 4, 11, 9, 11, 4, 12, 9, 12, 4, 13,
-	9, 13, 3, 2, 3, 2, 3, 2, 3, 2, 3, 3, 6, 3, 32, 10, 3, 13, 3, 14, 3, 33,
-	3, 4, 3, 4, 5, 4, 38, 10, 4, 3, 5, 3, 5, 3, 5, 3, 6, 3, 6, 3, 6, 3, 6,
-	3, 6, 3, 6, 3, 6, 5, 6, 50, 10, 6, 3, 6, 3, 6, 3, 7, 5, 7, 55, 10, 7, 3,
-	7, 3, 7, 3, 7, 3, 7, 5, 7, 61, 10, 7, 5, 7, 63, 10, 7, 3, 8, 3, 8, 3, 8,
-	7, 8, 68, 10, 8, 12, 8, 14, 8, 71, 11, 8, 3, 9, 3, 9, 3, 10, 3, 10, 3,
-	11, 3, 11, 3, 11, 3, 11, 3, 12, 3, 12, 3, 12, 3, 12, 3, 13, 3, 13, 3, 13,
-	3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 5,
-	13, 98, 10, 13, 3, 13, 2, 2, 14, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22,
-	24, 2, 3, 4, 2, 14, 14, 20, 21, 2, 102, 2, 26, 3, 2, 2, 2, 4, 31, 3, 2,
-	2, 2, 6, 37, 3, 2, 2, 2, 8, 39, 3, 2, 2, 2, 10, 42, 3, 2, 2, 2, 12, 54,
-	3, 2, 2, 2, 14, 64, 3, 2, 2, 2, 16, 72, 3, 2, 2, 2, 18, 74, 3, 2, 2, 2,
-	20, 76, 3, 2, 2, 2, 22, 80, 3, 2, 2, 2, 24, 97, 3, 2, 2, 2, 26, 27, 7,
-	3, 2, 2, 27, 28, 5, 4, 3, 2, 28, 29, 7, 2, 2, 3, 29, 3, 3, 2, 2, 2, 30,
-	32, 5, 6, 4, 2, 31, 30, 3, 2, 2, 2, 32, 33, 3, 2, 2, 2, 33, 31, 3, 2, 2,
-	2, 33, 34, 3, 2, 2, 2, 34, 5, 3, 2, 2, 2, 35, 38, 5, 8, 5, 2, 36, 38, 5,
-	10, 6, 2, 37, 35, 3, 2, 2, 2, 37, 36, 3, 2, 2, 2, 38, 7, 3, 2, 2, 2, 39,
-	40, 7, 19, 2, 2, 40, 41, 9, 2, 2, 2, 41, 9, 3, 2, 2, 2, 42, 49, 7, 4, 2,
-	2, 43, 50, 5, 18, 10, 2, 44, 50, 5, 12, 7, 2, 45, 50, 5, 14, 8, 2, 46,
-	50, 5, 16, 9, 2, 47, 50, 5, 20, 11, 2, 48, 50, 5, 22, 12, 2, 49, 43, 3,
-	2, 2, 2, 49, 44, 3, 2, 2, 2, 49, 45, 3, 2, 2, 2, 49, 46, 3, 2, 2, 2, 49,
-	47, 3, 2, 2, 2, 49, 48, 3, 2, 2, 2, 49, 50, 3, 2, 2, 2, 50, 51, 3, 2, 2,
-	2, 51, 52, 7, 5, 2, 2, 52, 11, 3, 2, 2, 2, 53, 55, 7, 15, 2, 2, 54, 53,
-	3, 2, 2, 2, 54, 55, 3, 2, 2, 2, 55, 56, 3, 2, 2, 2, 56, 62, 7, 6, 2, 2,
-	57, 60, 7, 15, 2, 2, 58, 59, 7, 6, 2, 2, 59, 61, 7, 15, 2, 2, 60, 58, 3,
-	2, 2, 2, 60, 61, 3, 2, 2, 2, 61, 63, 3, 2, 2, 2, 62, 57, 3, 2, 2, 2, 62,
-	63, 3, 2, 2, 2, 63, 13, 3, 2, 2, 2, 64, 69, 7, 15, 2, 2, 65, 66, 7, 7,
-	2, 2, 66, 68, 7, 15, 2, 2, 67, 65, 3, 2, 2, 2, 68, 71, 3, 2, 2, 2, 69,
-	67, 3, 2, 2, 2, 69, 70, 3, 2, 2, 2, 70, 15, 3, 2, 2, 2, 71, 69, 3, 2, 2,
-	2, 72, 73, 7, 17, 2, 2, 73, 17, 3, 2, 2, 2, 74, 75, 7, 20, 2, 2, 75, 19,
-	3, 2, 2, 2, 76, 77, 7, 8, 2, 2, 77, 78, 5, 24, 13, 2, 78, 79, 7, 9, 2,
-	2, 79, 21, 3, 2, 2, 2, 80, 81, 7, 10, 2, 2, 81, 82, 5, 24, 13, 2, 82, 83,
-	7, 9, 2, 2, 83, 23, 3, 2, 2, 2, 84, 85, 7, 11, 2, 2, 85, 98, 7, 14, 2,
-	2, 86, 87, 7, 11, 2, 2, 87, 88, 7, 14, 2, 2, 88, 89, 7, 23, 2, 2, 89, 98,
-	7, 16, 2, 2, 90, 91, 7, 12, 2, 2, 91, 92, 7, 22, 2, 2, 92, 98, 7, 15, 2,
-	2, 93, 94, 7, 11, 2, 2, 94, 95, 7, 14, 2, 2, 95, 96, 7, 13, 2, 2, 96, 98,
-	7, 18, 2, 2, 97, 84, 3, 2, 2, 2, 97, 86, 3, 2, 2, 2, 97, 90, 3, 2, 2, 2,
-	97, 93, 3, 2, 2, 2, 98, 25, 3, 2, 2, 2, 10, 33, 37, 49, 54, 60, 62, 69,
-	97,
+	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 23, 97, 4,
+	2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 4, 5, 9, 5, 4, 6, 9, 6, 4, 7, 9, 7, 4,
+	8, 9, 8, 4, 9, 9, 9, 4, 10, 9, 10, 4, 11, 9, 11, 4, 12, 9, 12, 4, 13, 9,
+	13, 3, 2, 3, 2, 3, 2, 3, 2, 3, 3, 6, 3, 32, 10, 3, 13, 3, 14, 3, 33, 3,
+	4, 3, 4, 5, 4, 38, 10, 4, 3, 5, 3, 5, 3, 5, 3, 6, 3, 6, 3, 6, 3, 6, 3,
+	6, 3, 6, 3, 6, 5, 6, 50, 10, 6, 3, 6, 3, 6, 3, 7, 5, 7, 55, 10, 7, 3, 7,
+	3, 7, 3, 7, 3, 7, 5, 7, 61, 10, 7, 5, 7, 63, 10, 7, 3, 8, 3, 8, 3, 8, 7,
+	8, 68, 10, 8, 12, 8, 14, 8, 71, 11, 8, 3, 9, 3, 9, 3, 10, 3, 10, 3, 11,
+	3, 11, 3, 11, 3, 11, 3, 12, 3, 12, 3, 12, 3, 12, 3, 13, 3, 13, 3, 13, 3,
+	13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 5, 13, 95, 10, 13, 3, 13,
+	2, 2, 14, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 2, 3, 4, 2, 13, 13,
+	19, 20, 2, 98, 2, 26, 3, 2, 2, 2, 4, 31, 3, 2, 2, 2, 6, 37, 3, 2, 2, 2,
+	8, 39, 3, 2, 2, 2, 10, 42, 3, 2, 2, 2, 12, 54, 3, 2, 2, 2, 14, 64, 3, 2,
+	2, 2, 16, 72, 3, 2, 2, 2, 18, 74, 3, 2, 2, 2, 20, 76, 3, 2, 2, 2, 22, 80,
+	3, 2, 2, 2, 24, 94, 3, 2, 2, 2, 26, 27, 7, 3, 2, 2, 27, 28, 5, 4, 3, 2,
+	28, 29, 7, 2, 2, 3, 29, 3, 3, 2, 2, 2, 30, 32, 5, 6, 4, 2, 31, 30, 3, 2,
+	2, 2, 32, 33, 3, 2, 2, 2, 33, 31, 3, 2, 2, 2, 33, 34, 3, 2, 2, 2, 34, 5,
+	3, 2, 2, 2, 35, 38, 5, 8, 5, 2, 36, 38, 5, 10, 6, 2, 37, 35, 3, 2, 2, 2,
+	37, 36, 3, 2, 2, 2, 38, 7, 3, 2, 2, 2, 39, 40, 7, 18, 2, 2, 40, 41, 9,
+	2, 2, 2, 41, 9, 3, 2, 2, 2, 42, 49, 7, 4, 2, 2, 43, 50, 5, 18, 10, 2, 44,
+	50, 5, 12, 7, 2, 45, 50, 5, 14, 8, 2, 46, 50, 5, 16, 9, 2, 47, 50, 5, 20,
+	11, 2, 48, 50, 5, 22, 12, 2, 49, 43, 3, 2, 2, 2, 49, 44, 3, 2, 2, 2, 49,
+	45, 3, 2, 2, 2, 49, 46, 3, 2, 2, 2, 49, 47, 3, 2, 2, 2, 49, 48, 3, 2, 2,
+	2, 49, 50, 3, 2, 2, 2, 50, 51, 3, 2, 2, 2, 51, 52, 7, 5, 2, 2, 52, 11,
+	3, 2, 2, 2, 53, 55, 7, 14, 2, 2, 54, 53, 3, 2, 2, 2, 54, 55, 3, 2, 2, 2,
+	55, 56, 3, 2, 2, 2, 56, 62, 7, 6, 2, 2, 57, 60, 7, 14, 2, 2, 58, 59, 7,
+	6, 2, 2, 59, 61, 7, 14, 2, 2, 60, 58, 3, 2, 2, 2, 60, 61, 3, 2, 2, 2, 61,
+	63, 3, 2, 2, 2, 62, 57, 3, 2, 2, 2, 62, 63, 3, 2, 2, 2, 63, 13, 3, 2, 2,
+	2, 64, 69, 7, 14, 2, 2, 65, 66, 7, 7, 2, 2, 66, 68, 7, 14, 2, 2, 67, 65,
+	3, 2, 2, 2, 68, 71, 3, 2, 2, 2, 69, 67, 3, 2, 2, 2, 69, 70, 3, 2, 2, 2,
+	70, 15, 3, 2, 2, 2, 71, 69, 3, 2, 2, 2, 72, 73, 7, 16, 2, 2, 73, 17, 3,
+	2, 2, 2, 74, 75, 7, 19, 2, 2, 75, 19, 3, 2, 2, 2, 76, 77, 7, 8, 2, 2, 77,
+	78, 5, 24, 13, 2, 78, 79, 7, 9, 2, 2, 79, 21, 3, 2, 2, 2, 80, 81, 7, 10,
+	2, 2, 81, 82, 5, 24, 13, 2, 82, 83, 7, 9, 2, 2, 83, 23, 3, 2, 2, 2, 84,
+	85, 7, 11, 2, 2, 85, 95, 7, 13, 2, 2, 86, 87, 7, 11, 2, 2, 87, 88, 7, 13,
+	2, 2, 88, 89, 7, 22, 2, 2, 89, 95, 7, 15, 2, 2, 90, 91, 7, 11, 2, 2, 91,
+	92, 7, 13, 2, 2, 92, 93, 7, 12, 2, 2, 93, 95, 7, 17, 2, 2, 94, 84, 3, 2,
+	2, 2, 94, 86, 3, 2, 2, 2, 94, 90, 3, 2, 2, 2, 95, 25, 3, 2, 2, 2, 10, 33,
+	37, 49, 54, 60, 62, 69, 94,
 }
 var deserializer = antlr.NewATNDeserializer(nil)
 var deserializedATN = deserializer.DeserializeFromUInt16(parserATN)
 
 var literalNames = []string{
-	"", "'$'", "'['", "']'", "':'", "','", "'?('", "')'", "'('", "'@.'", "'@.length'",
-	"'=~'", "", "", "", "", "", "", "'*'", "'length()'",
+	"", "'$'", "'['", "']'", "':'", "','", "'?('", "')'", "'('", "'@.'", "'=~'",
+	"", "", "", "", "", "", "'*'", "'length()'",
 }
 var symbolicNames = []string{
-	"", "", "", "", "", "", "", "", "", "", "", "", "Identifier", "INT", "NUMBER",
+	"", "", "", "", "", "", "", "", "", "", "", "Identifier", "INT", "NUMBER",
 	"QUOTED", "REGEX", "DOTS", "STAR", "Length", "OP", "COMP", "WS",
 }
 
@@ -112,18 +110,17 @@ const (
 	JsonpathParserT__7       = 8
 	JsonpathParserT__8       = 9
 	JsonpathParserT__9       = 10
-	JsonpathParserT__10      = 11
-	JsonpathParserIdentifier = 12
-	JsonpathParserINT        = 13
-	JsonpathParserNUMBER     = 14
-	JsonpathParserQUOTED     = 15
-	JsonpathParserREGEX      = 16
-	JsonpathParserDOTS       = 17
-	JsonpathParserSTAR       = 18
-	JsonpathParserLength     = 19
-	JsonpathParserOP         = 20
-	JsonpathParserCOMP       = 21
-	JsonpathParserWS         = 22
+	JsonpathParserIdentifier = 11
+	JsonpathParserINT        = 12
+	JsonpathParserNUMBER     = 13
+	JsonpathParserQUOTED     = 14
+	JsonpathParserREGEX      = 15
+	JsonpathParserDOTS       = 16
+	JsonpathParserSTAR       = 17
+	JsonpathParserLength     = 18
+	JsonpathParserOP         = 19
+	JsonpathParserCOMP       = 20
+	JsonpathParserWS         = 21
 )
 
 // JsonpathParser rules.
@@ -1487,6 +1484,30 @@ type IQueryExprContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// GetExists returns the exists token.
+	GetExists() antlr.Token
+
+	// GetName returns the name token.
+	GetName() antlr.Token
+
+	// GetOp returns the op token.
+	GetOp() antlr.Token
+
+	// GetValue returns the value token.
+	GetValue() antlr.Token
+
+	// SetExists sets the exists token.
+	SetExists(antlr.Token)
+
+	// SetName sets the name token.
+	SetName(antlr.Token)
+
+	// SetOp sets the op token.
+	SetOp(antlr.Token)
+
+	// SetValue sets the value token.
+	SetValue(antlr.Token)
+
 	// IsQueryExprContext differentiates from other interfaces.
 	IsQueryExprContext()
 }
@@ -1494,6 +1515,10 @@ type IQueryExprContext interface {
 type QueryExprContext struct {
 	*antlr.BaseParserRuleContext
 	parser antlr.Parser
+	exists antlr.Token
+	name   antlr.Token
+	op     antlr.Token
+	value  antlr.Token
 }
 
 func NewEmptyQueryExprContext() *QueryExprContext {
@@ -1518,6 +1543,22 @@ func NewQueryExprContext(parser antlr.Parser, parent antlr.ParserRuleContext, in
 
 func (s *QueryExprContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *QueryExprContext) GetExists() antlr.Token { return s.exists }
+
+func (s *QueryExprContext) GetName() antlr.Token { return s.name }
+
+func (s *QueryExprContext) GetOp() antlr.Token { return s.op }
+
+func (s *QueryExprContext) GetValue() antlr.Token { return s.value }
+
+func (s *QueryExprContext) SetExists(v antlr.Token) { s.exists = v }
+
+func (s *QueryExprContext) SetName(v antlr.Token) { s.name = v }
+
+func (s *QueryExprContext) SetOp(v antlr.Token) { s.op = v }
+
+func (s *QueryExprContext) SetValue(v antlr.Token) { s.value = v }
+
 func (s *QueryExprContext) Identifier() antlr.TerminalNode {
 	return s.GetToken(JsonpathParserIdentifier, 0)
 }
@@ -1528,14 +1569,6 @@ func (s *QueryExprContext) COMP() antlr.TerminalNode {
 
 func (s *QueryExprContext) NUMBER() antlr.TerminalNode {
 	return s.GetToken(JsonpathParserNUMBER, 0)
-}
-
-func (s *QueryExprContext) OP() antlr.TerminalNode {
-	return s.GetToken(JsonpathParserOP, 0)
-}
-
-func (s *QueryExprContext) INT() antlr.TerminalNode {
-	return s.GetToken(JsonpathParserINT, 0)
 }
 
 func (s *QueryExprContext) REGEX() antlr.TerminalNode {
@@ -1582,7 +1615,7 @@ func (p *JsonpathParser) QueryExpr() (localctx IQueryExprContext) {
 		}
 	}()
 
-	p.SetState(95)
+	p.SetState(92)
 	p.GetErrorHandler().Sync(p)
 	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 7, p.GetParserRuleContext()) {
 	case 1:
@@ -1593,7 +1626,10 @@ func (p *JsonpathParser) QueryExpr() (localctx IQueryExprContext) {
 		}
 		{
 			p.SetState(83)
-			p.Match(JsonpathParserIdentifier)
+
+			var _m = p.Match(JsonpathParserIdentifier)
+
+			localctx.(*QueryExprContext).exists = _m
 		}
 
 	case 2:
@@ -1604,49 +1640,52 @@ func (p *JsonpathParser) QueryExpr() (localctx IQueryExprContext) {
 		}
 		{
 			p.SetState(85)
-			p.Match(JsonpathParserIdentifier)
+
+			var _m = p.Match(JsonpathParserIdentifier)
+
+			localctx.(*QueryExprContext).name = _m
 		}
 		{
 			p.SetState(86)
-			p.Match(JsonpathParserCOMP)
+
+			var _m = p.Match(JsonpathParserCOMP)
+
+			localctx.(*QueryExprContext).op = _m
 		}
 		{
 			p.SetState(87)
-			p.Match(JsonpathParserNUMBER)
+
+			var _m = p.Match(JsonpathParserNUMBER)
+
+			localctx.(*QueryExprContext).value = _m
 		}
 
 	case 3:
 		p.EnterOuterAlt(localctx, 3)
 		{
 			p.SetState(88)
-			p.Match(JsonpathParserT__9)
-		}
-		{
-			p.SetState(89)
-			p.Match(JsonpathParserOP)
-		}
-		{
-			p.SetState(90)
-			p.Match(JsonpathParserINT)
-		}
-
-	case 4:
-		p.EnterOuterAlt(localctx, 4)
-		{
-			p.SetState(91)
 			p.Match(JsonpathParserT__8)
 		}
 		{
-			p.SetState(92)
-			p.Match(JsonpathParserIdentifier)
+			p.SetState(89)
+
+			var _m = p.Match(JsonpathParserIdentifier)
+
+			localctx.(*QueryExprContext).name = _m
 		}
 		{
-			p.SetState(93)
-			p.Match(JsonpathParserT__10)
+			p.SetState(90)
+
+			var _m = p.Match(JsonpathParserT__9)
+
+			localctx.(*QueryExprContext).op = _m
 		}
 		{
-			p.SetState(94)
-			p.Match(JsonpathParserREGEX)
+			p.SetState(91)
+
+			var _m = p.Match(JsonpathParserREGEX)
+
+			localctx.(*QueryExprContext).value = _m
 		}
 
 	}

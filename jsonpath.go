@@ -19,6 +19,14 @@ func asInt(t antlr.Token, val int) int {
 	return val
 }
 
+func asFloat(t antlr.Token, val float64) float64 {
+	if t != nil {
+		val, _ = strconv.ParseFloat(t.GetText(), 64)
+	}
+
+	return val
+}
+
 type nodeType int
 
 const (
@@ -27,19 +35,27 @@ const (
 	CHILD
 	DESCENDANT
 	ALL_ITEMS
+	FILTER_EXPR
+	SCRIPT_EXPR
 
 	MAX_RANGE = 0x7ffffff
 
 	TOKEN_ANY    = "*"
 	TOKEN_LENGTH = "!" // not a valid identifiers
+        TOKEN_REGEX = "=~"
 )
 
 // Node defines a processing node
 type Node struct {
-	nodeType         nodeType
-	name             string
-	indices          []int
-	start, end, step int
+	nodeType nodeType
+
+	name  string  // for CHILD/DESCENDANT/FILTER_EXPR/SCRIPT_EXPR
+	op    string
+	value float64 // for FILTER_EXP/SCRIPT_EXPR
+        regex string  // for FILTER_EXP/SCRIPT_EXPR
+
+	indices          []int // for ARRAY_ITEMS
+	start, end, step int   // for ARRAY_RANGE
 }
 
 func (n Node) String() string {
@@ -58,6 +74,12 @@ func (n Node) String() string {
 
 	case DESCENDANT:
 		return fmt.Sprintf("DESCENDANT %v", n.name)
+
+	case FILTER_EXPR:
+		return fmt.Sprintf("FILTER %v %v %v %v", n.name, n.op, n.value, n.regex)
+
+	case SCRIPT_EXPR:
+		return fmt.Sprintf("SCRIPT %v %v %v %v", n.name, n.op, n.value, n.regex)
 	}
 
 	return "UNKNOWN"
@@ -67,13 +89,18 @@ func (n Node) String() string {
 type Processor struct {
 	*parser.BaseJsonpathListener
 
-	Nodes []Node
-	err   error
+	Nodes  []Node
+	errors bool
 }
 
 // NewProcessor creates a new grammar Processor
 func NewProcessor() *Processor {
 	return &Processor{}
+}
+
+// Reset resets the processor state, making it ready to process another input
+func (p *Processor) Reset() {
+	p.errors = false
 }
 
 func (p *Processor) addNode(n Node) {
@@ -84,13 +111,17 @@ func (p *Processor) addNode(n Node) {
 // VisitErrorNode is called when there is an error
 //
 func (p *Processor) VisitErrorNode(node antlr.ErrorNode) {
-	p.err = fmt.Errorf("%v", node)
+	p.errors = true
 }
 
 //
 // ExitDotExpr is called when production dotExpr is exited.
 //
 func (p *Processor) ExitDotExpr(ctx *parser.DotExprContext) {
+	if p.errors {
+		return
+	}
+
 	name := TOKEN_ANY // any value
 
 	if ctx.Identifier() != nil {
@@ -112,6 +143,10 @@ func (p *Processor) ExitDotExpr(ctx *parser.DotExprContext) {
 // ExitItemsExpr is called when production itemsExpr is exited.
 //
 func (p *Processor) ExitItemsExpr(ctx *parser.ItemsExprContext) {
+	if p.errors {
+		return
+	}
+
 	n := Node{nodeType: ARRAY_ITEMS}
 
 	for _, i := range ctx.AllINT() {
@@ -125,6 +160,10 @@ func (p *Processor) ExitItemsExpr(ctx *parser.ItemsExprContext) {
 // ExitRangeExpr is called when production rangeExpr is exited.
 //
 func (p *Processor) ExitRangeExpr(ctx *parser.RangeExprContext) {
+	if p.errors {
+		return
+	}
+
 	p.addNode(Node{
 		nodeType: ARRAY_RANGE,
 		start:    asInt(ctx.GetStartIndex(), 0),
@@ -136,6 +175,10 @@ func (p *Processor) ExitRangeExpr(ctx *parser.RangeExprContext) {
 // ExitNameExpr is called when production nameExpr is exited.
 //
 func (p *Processor) ExitNameExpr(ctx *parser.NameExprContext) {
+	if p.errors {
+		return
+	}
+
 	p.addNode(Node{nodeType: CHILD, name: strings.Trim(ctx.QUOTED().GetText(), "'")})
 }
 
@@ -143,20 +186,77 @@ func (p *Processor) ExitNameExpr(ctx *parser.NameExprContext) {
 // ExitStarExpr is called when production starExpr is exited.
 //
 func (p *Processor) ExitStarExpr(ctx *parser.StarExprContext) {
+	if p.errors {
+		return
+	}
+
 	p.addNode(Node{nodeType: ALL_ITEMS})
+}
+
+//
+// ExitFilterExpr is called when production filterExpr is exited.
+//
+func (p *Processor) ExitFilterExpr(ctx *parser.FilterExprContext) {
+	if p.errors {
+		return
+	}
+
+	p.addQueryNode(FILTER_EXPR, ctx.QueryExpr())
+}
+
+//
+// ExitScriptExpr is called when production scriptExpr is exited.
+//
+func (p *Processor) ExitScriptExpr(ctx *parser.ScriptExprContext) {
+	if p.errors {
+		return
+	}
+
+	p.addQueryNode(SCRIPT_EXPR, ctx.QueryExpr())
+}
+
+func (p *Processor) addQueryNode(t nodeType, q parser.IQueryExprContext) {
+	var name string
+	var op string
+	var value float64
+        var regex string
+
+	if q.GetExists() != nil {
+		op = "exists"
+		name = q.GetExists().GetText()
+	} else {
+		op = q.GetOp().GetText()
+		name = q.GetName().GetText()
+
+                if op == TOKEN_REGEX {
+                    regex = q.GetValue().GetText()
+                } else {
+		    value = asFloat(q.GetValue(), 0.0)
+                }
+	}
+
+	n := Node{
+		nodeType: t,
+		name:     name,
+		op:       op,
+		value:    value,
+                regex:    regex,
+	}
+
+	p.addNode(n)
 }
 
 //
 // Parse parses a JsonPath expression
 //
-func (p *Processor) Parse(expr string) error {
+func (p *Processor) Parse(expr string) bool {
 	input := antlr.NewInputStream(expr)
 	lexer := parser.NewJsonpathLexer(input)
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	parser := parser.NewJsonpathParser(stream)
 	parser.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
 	antlr.ParseTreeWalkerDefault.Walk(p, parser.Jsonpath())
-	return p.err
+	return !p.errors
 }
 
 type map_type = map[string]interface{}
@@ -232,7 +332,7 @@ func getLength(v interface{}) interface{} {
 // Process input object according to parsed JsonPath
 //
 func (p *Processor) Process(v interface{}) interface{} {
-	if p.err != nil {
+	if p.errors {
 		return nil
 	}
 

@@ -22,9 +22,7 @@ func main() {
 	}
 
 	p := jsonpath.NewProcessor()
-	err := p.Parse(args[0])
-
-	if err != nil {
+	if !p.Parse(args[0]) {
 		os.Exit(1)
 	}
 
@@ -36,19 +34,19 @@ func main() {
 		return
 	}
 
-        var inf *os.File
+	var inf *os.File
 
-        if args[1] == "--" { // read from stdin
-            inf = os.Stdin
-        } else {
-	    f, err := os.Open(args[1])
-	    if err != nil {
-		fatal(err)
-	    }
+	if args[1] == "--" { // read from stdin
+		inf = os.Stdin
+	} else {
+		f, err := os.Open(args[1])
+		if err != nil {
+			fatal(err)
+		}
 
-	    defer f.Close()
-            inf = f
-        }
+		defer f.Close()
+		inf = f
+	}
 
 	j, err := simplejson.Load(inf)
 	if err != nil {
