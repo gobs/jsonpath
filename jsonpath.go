@@ -3,6 +3,7 @@ package jsonpath
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -124,7 +125,7 @@ func (n Node) String() string {
 	return "UNKNOWN"
 }
 
-func (n Node) CompareExists(v interface{}) bool {
+func (n *Node) CompareExists(v interface{}) bool {
 	return true
 
 	/*
@@ -139,7 +140,7 @@ func (n Node) CompareExists(v interface{}) bool {
 	*/
 }
 
-func (n Node) CompareEqual(v interface{}) bool {
+func (n *Node) CompareEqual(v interface{}) bool {
 	switch t := v.(type) {
 	case int:
 		return t == toInt(n.value)
@@ -154,7 +155,7 @@ func (n Node) CompareEqual(v interface{}) bool {
 	return false
 }
 
-func (n Node) CompareNotEqual(v interface{}) bool {
+func (n *Node) CompareNotEqual(v interface{}) bool {
 	switch t := v.(type) {
 	case int:
 		return t != toInt(n.value)
@@ -169,7 +170,7 @@ func (n Node) CompareNotEqual(v interface{}) bool {
 	return false
 }
 
-func (n Node) CompareGreater(v interface{}) bool {
+func (n *Node) CompareGreater(v interface{}) bool {
 	switch t := v.(type) {
 	case int:
 		return t > toInt(n.value)
@@ -184,7 +185,7 @@ func (n Node) CompareGreater(v interface{}) bool {
 	return false
 }
 
-func (n Node) CompareLess(v interface{}) bool {
+func (n *Node) CompareLess(v interface{}) bool {
 	switch t := v.(type) {
 	case int:
 		return t < toInt(n.value)
@@ -199,7 +200,7 @@ func (n Node) CompareLess(v interface{}) bool {
 	return false
 }
 
-func (n Node) CompareGreaterEqual(v interface{}) bool {
+func (n *Node) CompareGreaterEqual(v interface{}) bool {
 	switch t := v.(type) {
 	case int:
 		return t >= toInt(n.value)
@@ -214,7 +215,7 @@ func (n Node) CompareGreaterEqual(v interface{}) bool {
 	return false
 }
 
-func (n Node) CompareLessEqual(v interface{}) bool {
+func (n *Node) CompareLessEqual(v interface{}) bool {
 	switch t := v.(type) {
 	case int:
 		return t <= toInt(n.value)
@@ -229,15 +230,15 @@ func (n Node) CompareLessEqual(v interface{}) bool {
 	return false
 }
 
-func (n Node) CompareMatch(v interface{}) bool {
-	return false
+func (n *Node) CompareMatch(v interface{}) bool {
+	return n.value.(*regexp.Regexp).MatchString(toString(v))
 }
 
 // Processor defines the JsonPath grammar processor
 type Processor struct {
 	*parser.BaseJsonpathListener
 
-	Nodes  []Node
+	Nodes  []*Node
 	errors bool
 }
 
@@ -251,7 +252,7 @@ func (p *Processor) Reset() {
 	p.errors = false
 }
 
-func (p *Processor) addNode(n Node) {
+func (p *Processor) addNode(n *Node) {
 	p.Nodes = append(p.Nodes, n)
 }
 
@@ -281,9 +282,9 @@ func (p *Processor) ExitDotExpr(ctx *parser.DotExprContext) {
 	}
 
 	if ctx.DOTS().GetText() == ".." {
-		p.addNode(Node{nodeType: DESCENDANT, name: name})
+		p.addNode(&Node{nodeType: DESCENDANT, name: name})
 	} else {
-		p.addNode(Node{nodeType: CHILD, name: name})
+		p.addNode(&Node{nodeType: CHILD, name: name})
 	}
 }
 
@@ -301,7 +302,7 @@ func (p *Processor) ExitItemsExpr(ctx *parser.ItemsExprContext) {
 		n.indices = append(n.indices, asInt(i.GetSymbol(), -1))
 	}
 
-	p.addNode(n)
+	p.addNode(&n)
 }
 
 //
@@ -312,7 +313,7 @@ func (p *Processor) ExitRangeExpr(ctx *parser.RangeExprContext) {
 		return
 	}
 
-	p.addNode(Node{
+	p.addNode(&Node{
 		nodeType: ARRAY_RANGE,
 		start:    asInt(ctx.GetStartIndex(), 0),
 		end:      asInt(ctx.GetEndIndex(), MAX_RANGE),
@@ -327,7 +328,7 @@ func (p *Processor) ExitNameExpr(ctx *parser.NameExprContext) {
 		return
 	}
 
-	p.addNode(Node{nodeType: CHILD, name: strings.Trim(ctx.QUOTED().GetText(), "'")})
+	p.addNode(&Node{nodeType: CHILD, name: strings.Trim(ctx.QUOTED().GetText(), "'")})
 }
 
 //
@@ -338,7 +339,7 @@ func (p *Processor) ExitStarExpr(ctx *parser.StarExprContext) {
 		return
 	}
 
-	p.addNode(Node{nodeType: ALL_ITEMS})
+	p.addNode(&Node{nodeType: ALL_ITEMS})
 }
 
 //
@@ -376,7 +377,7 @@ func (p *Processor) addQueryNode(t nodeType, q parser.IQueryExprContext) {
 
 		if q.(*parser.QueryExprContext).QUOTED() != nil {
 			n.value = strings.Trim(q.GetValue().GetText(), "'")
-		} else {
+		} else if n.opName != TOKEN_REGEX {
 			n.value = asFloat(q.GetValue(), 0.0)
 		}
 
@@ -401,12 +402,24 @@ func (p *Processor) addQueryNode(t nodeType, q parser.IQueryExprContext) {
 			options := re[last+1:]
 			re = re[:last]
 
-			fmt.Println("re:", re, "options:", options)
-			n.value = re
+			if options != "" {
+				re = fmt.Sprintf("(?%v:%v)", options, re)
+			} else {
+				re = fmt.Sprintf("(%v)", re)
+			}
+
+			rc, err := regexp.Compile(re)
+			if err != nil {
+				fmt.Printf("REGEX /%v/%v: %v\n", re, options, err)
+				p.errors = true
+				return
+			}
+
+			n.value = rc
 		}
 	}
 
-	p.addNode(n)
+	p.addNode(&n)
 }
 
 //
