@@ -1,13 +1,8 @@
 grammar Jsonpath;
 
-/*
- Limited set of JsonPath notation
-
- TODO
- - bracketnotation
- - Check against spec description (http://goessner.net/articles/JsonPath/), e.g. '..' for recursive descent
-}
-*/
+//
+// Derived from https://github.com/stevenalexander/antlr4-jsonpath-grammar
+//
 
 jsonpath: '$' path EOF
         ;
