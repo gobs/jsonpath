@@ -27,6 +27,42 @@ func asFloat(t antlr.Token, val float64) float64 {
 	return val
 }
 
+func toInt(v interface{}) int {
+	switch t := v.(type) {
+	case int:
+		return t
+
+	case float64:
+		return int(t)
+
+	case string:
+		i, _ := strconv.Atoi(t)
+		return i
+	}
+
+	return 0
+}
+
+func toFloat(v interface{}) float64 {
+	switch t := v.(type) {
+	case int:
+		return float64(t)
+
+	case float64:
+		return t
+
+	case string:
+		f, _ := strconv.ParseFloat(t, 64)
+		return f
+	}
+
+	return 0.0
+}
+
+func toString(v interface{}) string {
+	return fmt.Sprintf("%v", v)
+}
+
 type nodeType int
 
 const (
@@ -42,17 +78,20 @@ const (
 
 	TOKEN_ANY    = "*"
 	TOKEN_LENGTH = "!" // not a valid identifiers
-        TOKEN_REGEX = "=~"
+	TOKEN_REGEX  = "=~"
 )
+
+// Operation is a method that perform an operation (conditional or not)
+type Operation func(v interface{}) bool
 
 // Node defines a processing node
 type Node struct {
 	nodeType nodeType
 
-	name  string  // for CHILD/DESCENDANT/FILTER_EXPR/SCRIPT_EXPR
-	op    string
-	value float64 // for FILTER_EXP/SCRIPT_EXPR
-        regex string  // for FILTER_EXP/SCRIPT_EXPR
+	name   string      // for CHILD/DESCENDANT/FILTER_EXPR/SCRIPT_EXPR
+	value  interface{} // for FILTER_EXP/SCRIPT_EXPR
+	op     Operation
+	opName string // used for debugging
 
 	indices          []int // for ARRAY_ITEMS
 	start, end, step int   // for ARRAY_RANGE
@@ -76,13 +115,116 @@ func (n Node) String() string {
 		return fmt.Sprintf("DESCENDANT %v", n.name)
 
 	case FILTER_EXPR:
-		return fmt.Sprintf("FILTER %v %v %v %v", n.name, n.op, n.value, n.regex)
+		return fmt.Sprintf("FILTER %v %v %v", n.name, n.opName, n.value)
 
 	case SCRIPT_EXPR:
-		return fmt.Sprintf("SCRIPT %v %v %v %v", n.name, n.op, n.value, n.regex)
+		return fmt.Sprintf("SCRIPT %v %v %v", n.name, n.opName, n.value)
 	}
 
 	return "UNKNOWN"
+}
+
+func (n Node) CompareExists(v interface{}) bool {
+	if m, ok := v.(map_type); ok {
+		_, exists := m[n.name]
+		return exists
+	}
+
+	return false
+}
+
+func (n Node) CompareEqual(v interface{}) bool {
+	switch t := v.(type) {
+	case int:
+		return t == toInt(n.value)
+
+	case float64:
+		return t == toFloat(n.value)
+
+	case string:
+		return t == toString(n.value)
+	}
+
+	return false
+}
+
+func (n Node) CompareNotEqual(v interface{}) bool {
+	switch t := v.(type) {
+	case int:
+		return t != toInt(n.value)
+
+	case float64:
+		return t != toFloat(n.value)
+
+	case string:
+		return t != toString(n.value)
+	}
+
+	return false
+}
+
+func (n Node) CompareGreater(v interface{}) bool {
+	switch t := v.(type) {
+	case int:
+		return t > toInt(n.value)
+
+	case float64:
+		return t > toFloat(n.value)
+
+	case string:
+		return t > toString(n.value)
+	}
+
+	return false
+}
+
+func (n Node) CompareLess(v interface{}) bool {
+	switch t := v.(type) {
+	case int:
+		return t < toInt(n.value)
+
+	case float64:
+		return t < toFloat(n.value)
+
+	case string:
+		return t < toString(n.value)
+	}
+
+	return false
+}
+
+func (n Node) CompareGreaterEqual(v interface{}) bool {
+	switch t := v.(type) {
+	case int:
+		return t >= toInt(n.value)
+
+	case float64:
+		return t >= toFloat(n.value)
+
+	case string:
+		return t >= toString(n.value)
+	}
+
+	return false
+}
+
+func (n Node) CompareLessEqual(v interface{}) bool {
+	switch t := v.(type) {
+	case int:
+		return t <= toInt(n.value)
+
+	case float64:
+		return t <= toFloat(n.value)
+
+	case string:
+		return t <= toString(n.value)
+	}
+
+	return false
+}
+
+func (n Node) CompareMatch(v interface{}) bool {
+	return false
 }
 
 // Processor defines the JsonPath grammar processor
@@ -216,31 +358,39 @@ func (p *Processor) ExitScriptExpr(ctx *parser.ScriptExprContext) {
 }
 
 func (p *Processor) addQueryNode(t nodeType, q parser.IQueryExprContext) {
-	var name string
-	var op string
-	var value float64
-        var regex string
+	n := Node{nodeType: t, opName: q.GetOp().GetText()}
 
 	if q.GetExists() != nil {
-		op = "exists"
-		name = q.GetExists().GetText()
+		n.name = q.GetExists().GetText()
+		n.op = n.CompareExists
 	} else {
-		op = q.GetOp().GetText()
-		name = q.GetName().GetText()
+		n.name = q.GetName().GetText()
+		n.value = asFloat(q.GetValue(), 0.0)
 
-                if op == TOKEN_REGEX {
-                    regex = q.GetValue().GetText()
-                } else {
-		    value = asFloat(q.GetValue(), 0.0)
-                }
-	}
+		switch n.opName {
+		case "==":
+			n.op = n.CompareEqual
+		case "!=":
+			n.op = n.CompareNotEqual
+		case ">":
+			n.op = n.CompareGreater
+		case "<":
+			n.op = n.CompareLess
+		case ">=":
+			n.op = n.CompareGreaterEqual
+		case "<=":
+			n.op = n.CompareLessEqual
+		case TOKEN_REGEX:
+			n.op = n.CompareMatch
 
-	n := Node{
-		nodeType: t,
-		name:     name,
-		op:       op,
-		value:    value,
-                regex:    regex,
+			re := q.GetValue().GetText()[1:]   // skip first '/'
+			last := strings.LastIndex(re, "/") // find last '/'
+			options := re[last+1:]
+			re = re[:last]
+
+			fmt.Println("re:", re, "options:", options)
+			n.value = re
+		}
 	}
 
 	p.addNode(n)
