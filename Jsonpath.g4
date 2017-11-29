@@ -46,11 +46,11 @@ queryExpr : '@.' exists=Identifier
 Identifier : [a-zA-Z][a-zA-Z0-9_]*
            ;
 
-NUMBER : INT ('.' ('0'..'9')+)?
-       ;
-
 INT : '-'? ('0'..'9')+
     ;
+
+NUMBER : INT ('.' ('0'..'9')+)?
+       ;
 
 QUOTED : '\'' (~'\'')* '\''
        ;
