@@ -27,7 +27,7 @@ var parserATN = []uint16{
 	11, 3, 11, 3, 11, 3, 12, 3, 12, 3, 12, 3, 12, 3, 13, 3, 13, 3, 13, 3, 13,
 	3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 5, 13, 103, 10, 13, 3, 13, 2,
 	2, 14, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 2, 4, 4, 2, 13, 13,
-	19, 20, 3, 2, 15, 16, 2, 108, 2, 26, 3, 2, 2, 2, 4, 31, 3, 2, 2, 2, 6,
+	19, 20, 3, 2, 14, 16, 2, 108, 2, 26, 3, 2, 2, 2, 4, 31, 3, 2, 2, 2, 6,
 	37, 3, 2, 2, 2, 8, 42, 3, 2, 2, 2, 10, 44, 3, 2, 2, 2, 12, 56, 3, 2, 2,
 	2, 14, 66, 3, 2, 2, 2, 16, 74, 3, 2, 2, 2, 18, 82, 3, 2, 2, 2, 20, 84,
 	3, 2, 2, 2, 22, 88, 3, 2, 2, 2, 24, 102, 3, 2, 2, 2, 26, 27, 7, 3, 2, 2,
@@ -1607,6 +1607,10 @@ func (s *QueryExprContext) COMP() antlr.TerminalNode {
 	return s.GetToken(JsonpathParserCOMP, 0)
 }
 
+func (s *QueryExprContext) INT() antlr.TerminalNode {
+	return s.GetToken(JsonpathParserINT, 0)
+}
+
 func (s *QueryExprContext) NUMBER() antlr.TerminalNode {
 	return s.GetToken(JsonpathParserNUMBER, 0)
 }
@@ -1705,7 +1709,7 @@ func (p *JsonpathParser) QueryExpr() (localctx IQueryExprContext) {
 
 		_la = p.GetTokenStream().LA(1)
 
-		if !(_la == JsonpathParserNUMBER || _la == JsonpathParserQUOTED) {
+		if !(((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<JsonpathParserINT)|(1<<JsonpathParserNUMBER)|(1<<JsonpathParserQUOTED))) != 0) {
 			var _ri = p.GetErrorHandler().RecoverInline(p)
 
 			localctx.(*QueryExprContext).value = _ri
