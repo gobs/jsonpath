@@ -480,10 +480,12 @@ func (p *Processor) Parse(expr string) bool {
 }
 
 func (p *Processor) find(names set_type, j interface{}) (ret []interface{}) {
+	//fmt.Println("find", names.List(), j)
+
 	var a []interface{}
 
 	addEle := true
-	_, any := names[TOKEN_ANY]
+	any := names.Contains(TOKEN_ANY)
 
 	if aj, ok := j.(array_type); ok {
 		a = aj
@@ -500,15 +502,18 @@ func (p *Processor) find(names set_type, j interface{}) (ret []interface{}) {
 		switch t := c.(type) {
 		case map_type:
 			for k, v := range t {
-				if _, ok := names[k]; ok {
+				if names.Contains(k) {
 					ret = append(ret, v)
 				} else {
 					if any {
 						ret = append(ret, v)
 					}
+                                }
 
-					res := p.find(names, v)
-					ret = append(ret, res...)
+                                switch v.(type) {
+                                case map_type, array_type:
+                                        res := p.find(names, v)
+                                        ret = append(ret, res...)
 				}
 			}
 
