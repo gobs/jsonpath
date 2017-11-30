@@ -12,6 +12,29 @@ import (
 	"github.com/gobs/simplejson"
 )
 
+type map_type = map[string]interface{}
+type array_type = []interface{}
+type set_type map[string]struct{}
+
+func (s set_type) Set(v string) {
+	s[v] = struct{}{}
+}
+
+func (s set_type) Contains(v string) bool {
+	_, ok := s[v]
+	return ok
+}
+
+func (s set_type) List() []string {
+	var l []string
+
+	for k := range s {
+		l = append(l, k)
+	}
+
+	return l
+}
+
 func asInt(t antlr.Token, val int) int {
 	if t != nil {
 		val, _ = strconv.Atoi(t.GetText())
@@ -89,12 +112,12 @@ type Operation func(v interface{}) bool
 type Node struct {
 	nodeType nodeType
 
-	name   string      // for DESCENDANT/FILTER_EXPR/SCRIPT_EXPR
-	value  interface{} // for FILTER_EXP/SCRIPT_EXPR
-	op     Operation
-	opName string // used for debugging
+	opId    string      // for DESCENDANT/FILTER_EXPR/SCRIPT_EXPR
+	opValue interface{} // for FILTER_EXP/SCRIPT_EXPR
+	op      Operation
+	opName  string // used for debugging
 
-	names            []string // for CHILD
+	names            set_type // for CHILD
 	indices          []int    // for ARRAY_ITEMS
 	start, end, step int      // for ARRAY_RANGE
 }
@@ -111,16 +134,16 @@ func (n Node) String() string {
 		return "ALL_ITEMS"
 
 	case CHILD:
-		return fmt.Sprintf("CHILD %v", n.names)
+		return fmt.Sprintf("CHILD %v", n.names.List())
 
 	case DESCENDANT:
-		return fmt.Sprintf("DESCENDANT %v", n.names)
+		return fmt.Sprintf("DESCENDANT %v", n.names.List())
 
 	case FILTER_EXPR:
-		return fmt.Sprintf("FILTER %v %v %v", n.name, n.opName, n.value)
+		return fmt.Sprintf("FILTER %v %v %v", n.opId, n.opName, n.opValue)
 
 	case SCRIPT_EXPR:
-		return fmt.Sprintf("SCRIPT %v %v %v", n.name, n.opName, n.value)
+		return fmt.Sprintf("SCRIPT %v %v %v", n.opId, n.opName, n.opValue)
 	}
 
 	return "UNKNOWN"
@@ -133,7 +156,7 @@ func (n *Node) CompareExists(v interface{}) bool {
 		         * this is done at the filter level
 		         *
 			if m, ok := v.(map_type); ok {
-				_, exists := m[n.name]
+				_, exists := m[n.opId]
 				return exists
 			}
 
@@ -144,13 +167,13 @@ func (n *Node) CompareExists(v interface{}) bool {
 func (n *Node) CompareEqual(v interface{}) bool {
 	switch t := v.(type) {
 	case int:
-		return t == toInt(n.value)
+		return t == toInt(n.opValue)
 
 	case float64:
-		return t == toFloat(n.value)
+		return t == toFloat(n.opValue)
 
 	case string:
-		return t == toString(n.value)
+		return t == toString(n.opValue)
 	}
 
 	return false
@@ -159,13 +182,13 @@ func (n *Node) CompareEqual(v interface{}) bool {
 func (n *Node) CompareNotEqual(v interface{}) bool {
 	switch t := v.(type) {
 	case int:
-		return t != toInt(n.value)
+		return t != toInt(n.opValue)
 
 	case float64:
-		return t != toFloat(n.value)
+		return t != toFloat(n.opValue)
 
 	case string:
-		return t != toString(n.value)
+		return t != toString(n.opValue)
 	}
 
 	return false
@@ -174,13 +197,13 @@ func (n *Node) CompareNotEqual(v interface{}) bool {
 func (n *Node) CompareGreater(v interface{}) bool {
 	switch t := v.(type) {
 	case int:
-		return t > toInt(n.value)
+		return t > toInt(n.opValue)
 
 	case float64:
-		return t > toFloat(n.value)
+		return t > toFloat(n.opValue)
 
 	case string:
-		return t > toString(n.value)
+		return t > toString(n.opValue)
 	}
 
 	return false
@@ -189,13 +212,13 @@ func (n *Node) CompareGreater(v interface{}) bool {
 func (n *Node) CompareLess(v interface{}) bool {
 	switch t := v.(type) {
 	case int:
-		return t < toInt(n.value)
+		return t < toInt(n.opValue)
 
 	case float64:
-		return t < toFloat(n.value)
+		return t < toFloat(n.opValue)
 
 	case string:
-		return t < toString(n.value)
+		return t < toString(n.opValue)
 	}
 
 	return false
@@ -204,13 +227,13 @@ func (n *Node) CompareLess(v interface{}) bool {
 func (n *Node) CompareGreaterEqual(v interface{}) bool {
 	switch t := v.(type) {
 	case int:
-		return t >= toInt(n.value)
+		return t >= toInt(n.opValue)
 
 	case float64:
-		return t >= toFloat(n.value)
+		return t >= toFloat(n.opValue)
 
 	case string:
-		return t >= toString(n.value)
+		return t >= toString(n.opValue)
 	}
 
 	return false
@@ -219,20 +242,20 @@ func (n *Node) CompareGreaterEqual(v interface{}) bool {
 func (n *Node) CompareLessEqual(v interface{}) bool {
 	switch t := v.(type) {
 	case int:
-		return t <= toInt(n.value)
+		return t <= toInt(n.opValue)
 
 	case float64:
-		return t <= toFloat(n.value)
+		return t <= toFloat(n.opValue)
 
 	case string:
-		return t <= toString(n.value)
+		return t <= toString(n.opValue)
 	}
 
 	return false
 }
 
 func (n *Node) CompareMatch(v interface{}) bool {
-	return n.value.(*regexp.Regexp).MatchString(toString(v))
+	return n.opValue.(*regexp.Regexp).MatchString(toString(v))
 }
 
 // Processor defines the JsonPath grammar processor
@@ -272,18 +295,18 @@ func (p *Processor) ExitDotExpr(ctx *parser.DotExprContext) {
 		return
 	}
 
-	var names []string
+	names := set_type{}
 
 	if ctx.STAR() != nil {
-		names = append(names, TOKEN_ANY) // any value
+		names.Set(TOKEN_ANY) // any value
 	}
 
 	if ctx.Identifier() != nil {
-		names = append(names, ctx.Identifier().GetText())
+		names.Set(ctx.Identifier().GetText())
 	}
 
 	if ctx.Length() != nil {
-		names = append(names, TOKEN_LENGTH)
+		names.Set(TOKEN_LENGTH)
 	}
 
 	if ctx.DOTS().GetText() == ".." {
@@ -333,15 +356,15 @@ func (p *Processor) ExitNamesExpr(ctx *parser.NamesExprContext) {
 		return
 	}
 
-	n := &Node{nodeType: CHILD}
-	last := len(p.Nodes) - 1
+	n := &Node{nodeType: CHILD, names: set_type{}}
 
-	if last >= 0 && p.Nodes[last].names == nil {
+	last := len(p.Nodes) - 1
+	if last >= 0 && len(p.Nodes[last].names) == 0 {
 		n, p.Nodes = p.Nodes[last], p.Nodes[:last]
 	}
 
 	for _, i := range ctx.AllQUOTED() {
-		n.names = append(n.names, strings.Trim(i.GetSymbol().GetText(), "'"))
+		n.names.Set(strings.Trim(i.GetSymbol().GetText(), "'"))
 	}
 
 	p.addNode(n)
@@ -355,7 +378,12 @@ func (p *Processor) ExitStarExpr(ctx *parser.StarExprContext) {
 		return
 	}
 
-	p.addNode(&Node{nodeType: ALL_ITEMS})
+	last := len(p.Nodes) - 1
+	if last >= 0 && len(p.Nodes[last].names) == 0 {
+		p.Nodes[last].names.Set(TOKEN_ANY)
+	} else {
+		p.addNode(&Node{nodeType: ALL_ITEMS})
+	}
 }
 
 //
@@ -384,17 +412,17 @@ func (p *Processor) addQueryNode(t nodeType, q parser.IQueryExprContext) {
 	n := Node{nodeType: t}
 
 	if q.GetExists() != nil {
-		n.name = q.GetExists().GetText()
+		n.opId = q.GetExists().GetText()
 		n.op = n.CompareExists
 		n.opName = "exists"
 	} else {
-		n.name = q.GetName().GetText()
+		n.opId = q.GetName().GetText()
 		n.opName = q.GetOp().GetText()
 
 		if q.(*parser.QueryExprContext).QUOTED() != nil {
-			n.value = strings.Trim(q.GetValue().GetText(), "'")
+			n.opValue = strings.Trim(q.GetValue().GetText(), "'")
 		} else if n.opName != TOKEN_REGEX {
-			n.value = asFloat(q.GetValue(), 0.0)
+			n.opValue = asFloat(q.GetValue(), 0.0)
 		}
 
 		switch n.opName {
@@ -431,7 +459,7 @@ func (p *Processor) addQueryNode(t nodeType, q parser.IQueryExprContext) {
 				return
 			}
 
-			n.value = rc
+			n.opValue = rc
 		}
 	}
 
@@ -451,13 +479,11 @@ func (p *Processor) Parse(expr string) bool {
 	return !p.errors
 }
 
-type map_type = map[string]interface{}
-type array_type = []interface{}
-
-func (p *Processor) find(name string, j interface{}) (ret []interface{}) {
+func (p *Processor) find(names set_type, j interface{}) (ret []interface{}) {
 	var a []interface{}
 
 	addEle := true
+	_, any := names[TOKEN_ANY]
 
 	if aj, ok := j.(array_type); ok {
 		a = aj
@@ -467,27 +493,27 @@ func (p *Processor) find(name string, j interface{}) (ret []interface{}) {
 	}
 
 	for _, c := range a {
-		if addEle && name == TOKEN_ANY {
+		if addEle && any {
 			ret = append(ret, c)
 		}
 
 		switch t := c.(type) {
 		case map_type:
 			for k, v := range t {
-				if k == name {
+				if _, ok := names[k]; ok {
 					ret = append(ret, v)
 				} else {
-					if name == TOKEN_ANY {
+					if any {
 						ret = append(ret, v)
 					}
 
-					res := p.find(name, v)
+					res := p.find(names, v)
 					ret = append(ret, res...)
 				}
 			}
 
 		case array_type:
-			res := p.find(name, t)
+			res := p.find(names, t)
 			ret = append(ret, res...)
 		}
 	}
@@ -576,31 +602,31 @@ func (p *Processor) Process(v interface{}) interface{} {
 			a, err := j.Array()
 			if err != nil {
 				a = array_type{j.Data()}
-			} else if n.name == TOKEN_LENGTH {
+			} else if n.names.Contains(TOKEN_LENGTH) {
 				res = append(res, getLength(a))
 				v = res
 				continue
 			}
 
 			for _, c := range a {
-				if n.name == TOKEN_LENGTH {
+				if n.names.Contains(TOKEN_LENGTH) {
 					res = append(res, getLength(a))
 					continue
 				}
 
 				if m, ok := c.(map_type); ok {
-					if n.name == TOKEN_ANY {
+					if n.names.Contains(TOKEN_ANY) {
 						for _, mv := range m {
 							res = append(res, mv)
 						}
 					} else {
-						for _, nn := range n.names {
+						for nn := range n.names {
 							if v, ok := m[nn]; ok {
 								res = append(res, v)
 							}
 						}
 					}
-				} else if n.name == TOKEN_ANY {
+				} else if n.names.Contains(TOKEN_ANY) {
 					res = append(res, c)
 				}
 			}
@@ -612,7 +638,7 @@ func (p *Processor) Process(v interface{}) interface{} {
 			}
 
 		case DESCENDANT:
-			v = p.find(n.names[0], v)
+			v = p.find(n.names, v)
 			if len(v.(array_type)) == 1 && s < last {
 				v = v.(array_type)[0]
 			}
@@ -643,7 +669,7 @@ func (p *Processor) Process(v interface{}) interface{} {
 
 			for _, c := range a {
 				if m, ok := c.(map_type); ok {
-					if v, ok := m[n.name]; ok {
+					if v, ok := m[n.opId]; ok {
 						if n.op(v) {
 							res = append(res, m)
 						}
