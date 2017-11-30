@@ -479,46 +479,61 @@ func (p *Processor) Parse(expr string) bool {
 	return !p.errors
 }
 
-func (p *Processor) find(names set_type, j interface{}) (ret []interface{}) {
+func (p *Processor) find(names set_type, j interface{}, enhanced bool) (ret []interface{}) {
 	//fmt.Println("find", names.List(), j)
 
 	var a []interface{}
 
-	addEle := true
+	addele := true
 	any := names.Contains(TOKEN_ANY)
 
 	if aj, ok := j.(array_type); ok {
 		a = aj
 	} else {
 		a = array_type{j}
-		addEle = false
+		addele = false
 	}
 
 	for _, c := range a {
-		if addEle && any {
+		if addele && any {
 			ret = append(ret, c)
 		}
 
 		switch t := c.(type) {
 		case map_type:
-			for k, v := range t {
-				if names.Contains(k) {
-					ret = append(ret, v)
-				} else {
-					if any {
-						ret = append(ret, v)
-					}
-                                }
+			l := len(names)
+			mret := map_type{}
 
-                                switch v.(type) {
-                                case map_type, array_type:
-                                        res := p.find(names, v)
-                                        ret = append(ret, res...)
+			addresult := func(k string, v interface{}) {
+				if enhanced && l > 1 {
+					mret[k] = v
+				} else {
+					ret = append(ret, v)
 				}
 			}
 
+			for k, v := range t {
+				if names.Contains(k) {
+					addresult(k, v)
+				} else {
+					if any {
+						addresult(k, v)
+					}
+				}
+
+				switch v.(type) {
+				case map_type, array_type:
+					res := p.find(names, v, enhanced)
+					ret = append(ret, res...)
+				}
+			}
+
+			if len(mret) > 0 {
+				ret = append(ret, mret)
+			}
+
 		case array_type:
-			res := p.find(names, t)
+			res := p.find(names, t, enhanced)
 			ret = append(ret, res...)
 		}
 	}
@@ -554,7 +569,7 @@ func getLength(v interface{}) interface{} {
 //
 // Process input object according to parsed JsonPath
 //
-func (p *Processor) Process(v interface{}) interface{} {
+func (p *Processor) Process(v interface{}, enhanced bool) interface{} {
 	if p.errors {
 		return nil
 	}
@@ -620,17 +635,33 @@ func (p *Processor) Process(v interface{}) interface{} {
 				}
 
 				if m, ok := c.(map_type); ok {
+					l := len(n.names)
+					mres := map_type{}
+
+					addresult := func(k string, v interface{}) {
+						if enhanced && l > 1 {
+							mres[k] = v
+						} else {
+							res = append(res, v)
+						}
+					}
+
 					if n.names.Contains(TOKEN_ANY) {
-						for _, mv := range m {
-							res = append(res, mv)
+						for mk, mv := range m {
+							addresult(mk, mv)
 						}
 					} else {
 						for nn := range n.names {
 							if v, ok := m[nn]; ok {
-								res = append(res, v)
+								addresult(nn, v)
 							}
 						}
 					}
+
+					if len(mres) > 0 {
+						res = append(res, mres)
+					}
+
 				} else if n.names.Contains(TOKEN_ANY) {
 					res = append(res, c)
 				}
@@ -643,7 +674,7 @@ func (p *Processor) Process(v interface{}) interface{} {
 			}
 
 		case DESCENDANT:
-			v = p.find(n.names, v)
+			v = p.find(n.names, v, enhanced)
 			if len(v.(array_type)) == 1 && s < last {
 				v = v.(array_type)[0]
 			}

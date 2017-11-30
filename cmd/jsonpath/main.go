@@ -2,6 +2,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
@@ -15,18 +16,21 @@ func fatal(args ...interface{}) {
 }
 
 func main() {
-	args := os.Args[1:]
+	var enhanced bool
 
-	if len(args) == 0 || len(args) > 2 {
+	flag.BoolVar(&enhanced, "e", false, "enhanced: returns key/value pairs for objects")
+	flag.Parse()
+
+	if flag.NArg() == 0 || flag.NArg() > 2 {
 		fatal("usage:", os.Args[0], "$.json.path [filename]")
 	}
 
 	p := jsonpath.NewProcessor()
-	if !p.Parse(args[0]) {
+	if !p.Parse(flag.Arg(0)) {
 		os.Exit(1)
 	}
 
-	if len(args) == 1 {
+	if flag.NArg() == 1 {
 		for _, n := range p.Nodes {
 			fmt.Println(n)
 		}
@@ -36,10 +40,10 @@ func main() {
 
 	var inf *os.File
 
-	if args[1] == "--" { // read from stdin
+	if flag.Arg(1) == "--" { // read from stdin
 		inf = os.Stdin
 	} else {
-		f, err := os.Open(args[1])
+		f, err := os.Open(flag.Arg(1))
 		if err != nil {
 			fatal(err)
 		}
@@ -53,6 +57,6 @@ func main() {
 		fatal(err)
 	}
 
-	ret := p.Process(j)
+	ret := p.Process(j, enhanced)
 	fmt.Println(simplejson.MustDumpString(ret, simplejson.Indent("  ")))
 }
