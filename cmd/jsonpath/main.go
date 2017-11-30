@@ -16,10 +16,18 @@ func fatal(args ...interface{}) {
 }
 
 func main() {
-	var enhanced bool
+	var options jsonpath.ProcessOptions
 
-	flag.BoolVar(&enhanced, "e", false, "enhanced: returns key/value pairs for objects")
+	enhanced := flag.Bool("e", false, "enhanced: returns key/value pairs for objects")
+	collapse := flag.Bool("c", false, "collapse: if result is an array of 1 element, return the element")
 	flag.Parse()
+
+	if *enhanced {
+		options |= jsonpath.Enhanced
+	}
+	if *collapse {
+		options |= jsonpath.Collapse
+	}
 
 	if flag.NArg() == 0 || flag.NArg() > 2 {
 		fatal("usage:", os.Args[0], "$.json.path [filename]")
@@ -57,6 +65,6 @@ func main() {
 		fatal(err)
 	}
 
-	ret := p.Process(j, enhanced)
+	ret := p.Process(j, options)
 	fmt.Println(simplejson.MustDumpString(ret, simplejson.Indent("  ")))
 }

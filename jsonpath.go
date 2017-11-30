@@ -12,6 +12,13 @@ import (
 	"github.com/gobs/simplejson"
 )
 
+type ProcessOptions int
+
+const (
+	Enhanced ProcessOptions = 1
+	Collapse ProcessOptions = 2
+)
+
 type map_type = map[string]interface{}
 type array_type = []interface{}
 type set_type map[string]struct{}
@@ -569,10 +576,13 @@ func getLength(v interface{}) interface{} {
 //
 // Process input object according to parsed JsonPath
 //
-func (p *Processor) Process(v interface{}, enhanced bool) interface{} {
+func (p *Processor) Process(v interface{}, options ProcessOptions) interface{} {
 	if p.errors {
 		return nil
 	}
+
+	enhanced := (options & Enhanced) == Enhanced
+	collapse := (options & Collapse) == Collapse
 
 	if j, ok := v.(*simplejson.Json); ok {
 		v = j.Data()
@@ -719,6 +729,12 @@ func (p *Processor) Process(v interface{}, enhanced bool) interface{} {
 				v = res
 			}
 
+		}
+	}
+
+	if a, ok := v.(array_type); ok {
+		if collapse && len(a) == 1 {
+			v = a[0]
 		}
 	}
 
