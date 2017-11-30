@@ -14,7 +14,8 @@ nodeExpr : dotExpr
          | selectExpr
          ;
 
-dotExpr : DOTS (Identifier | STAR | Length)
+dotExpr : DOTS 
+        | DOTS (Identifier | STAR | Length )
         ;
 
 selectExpr : '[' (starExpr | rangeExpr | itemsExpr | namesExpr | filterExpr | scriptExpr)? ']'

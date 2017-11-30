@@ -272,20 +272,24 @@ func (p *Processor) ExitDotExpr(ctx *parser.DotExprContext) {
 		return
 	}
 
-	name := TOKEN_ANY // any value
+	var names []string
+
+	if ctx.STAR() != nil {
+		names = append(names, TOKEN_ANY) // any value
+	}
 
 	if ctx.Identifier() != nil {
-		name = ctx.Identifier().GetText()
+		names = append(names, ctx.Identifier().GetText())
 	}
 
 	if ctx.Length() != nil {
-		name = TOKEN_LENGTH
+		names = append(names, TOKEN_LENGTH)
 	}
 
 	if ctx.DOTS().GetText() == ".." {
-		p.addNode(&Node{nodeType: DESCENDANT, names: []string{name}})
+		p.addNode(&Node{nodeType: DESCENDANT, names: names})
 	} else {
-		p.addNode(&Node{nodeType: CHILD, name: name})
+		p.addNode(&Node{nodeType: CHILD, names: names})
 	}
 }
 
@@ -329,13 +333,18 @@ func (p *Processor) ExitNamesExpr(ctx *parser.NamesExprContext) {
 		return
 	}
 
-	n := Node{nodeType: CHILD}
+	n := &Node{nodeType: CHILD}
+	last := len(p.Nodes) - 1
+
+	if last >= 0 && p.Nodes[last].names == nil {
+		n, p.Nodes = p.Nodes[last], p.Nodes[:last]
+	}
 
 	for _, i := range ctx.AllQUOTED() {
 		n.names = append(n.names, strings.Trim(i.GetSymbol().GetText(), "'"))
 	}
 
-	p.addNode(&n)
+	p.addNode(n)
 }
 
 //
