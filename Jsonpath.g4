@@ -36,7 +36,7 @@ starExpr : STAR
 filterExpr : '?(' queryExpr ')'
            ;
 
-scriptExpr : '(' queryExpr ')'
+scriptExpr : '(' valueExpr ')'
            ;
 
 queryExpr : '@.' exists=Identifier
@@ -44,8 +44,21 @@ queryExpr : '@.' exists=Identifier
           | '@.' name=Identifier op='=~' value=REGEX
           ;
 
+valueExpr : '@.' name=Identifier op=OP value=(INT | NUMBER )
+          | '@.' name=Length op=OP value=(INT | NUMBER )
+          ;
+
+OP : '+' | '-' | '/' | '*'
+   ;
+
+COMP : '>' | '>=' | '<' | '<=' | '==' | '!='
+     ;
+
 Identifier : [a-zA-Z][a-zA-Z0-9_]*
            ;
+
+Length : 'length()'
+       ;
 
 INT : '-'? ('0'..'9')+
     ;
@@ -64,15 +77,6 @@ DOTS : '.'
      ;
 
 STAR : '*'
-     ;
-
-Length : 'length()'
-       ;
-
-OP : '+' | '-' | '/' | '*'
-   ;
-
-COMP : '>' | '>=' | '<' | '<=' | '==' | '!='
      ;
 
 WS : [ \t\n\r]+ -> skip

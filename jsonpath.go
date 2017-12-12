@@ -15,6 +15,7 @@ import (
 type ProcessOptions int
 
 const (
+	Default  ProcessOptions = 0
 	Enhanced ProcessOptions = 1
 	Collapse ProcessOptions = 2
 )
@@ -113,7 +114,7 @@ const (
 )
 
 // Operation is a method that perform an operation (conditional or not)
-type Operation func(v interface{}) bool
+type Operation func(v interface{}) interface{}
 
 // Node defines a processing node
 type Node struct {
@@ -156,22 +157,11 @@ func (n Node) String() string {
 	return "UNKNOWN"
 }
 
-func (n *Node) CompareExists(v interface{}) bool {
+func (n *Node) CompareExists(v interface{}) interface{} {
 	return true
-
-	/*
-		         * this is done at the filter level
-		         *
-			if m, ok := v.(map_type); ok {
-				_, exists := m[n.opId]
-				return exists
-			}
-
-			return false
-	*/
 }
 
-func (n *Node) CompareEqual(v interface{}) bool {
+func (n *Node) CompareEqual(v interface{}) interface{} {
 	switch t := v.(type) {
 	case int:
 		return t == toInt(n.opValue)
@@ -186,7 +176,7 @@ func (n *Node) CompareEqual(v interface{}) bool {
 	return false
 }
 
-func (n *Node) CompareNotEqual(v interface{}) bool {
+func (n *Node) CompareNotEqual(v interface{}) interface{} {
 	switch t := v.(type) {
 	case int:
 		return t != toInt(n.opValue)
@@ -201,7 +191,7 @@ func (n *Node) CompareNotEqual(v interface{}) bool {
 	return false
 }
 
-func (n *Node) CompareGreater(v interface{}) bool {
+func (n *Node) CompareGreater(v interface{}) interface{} {
 	switch t := v.(type) {
 	case int:
 		return t > toInt(n.opValue)
@@ -216,7 +206,7 @@ func (n *Node) CompareGreater(v interface{}) bool {
 	return false
 }
 
-func (n *Node) CompareLess(v interface{}) bool {
+func (n *Node) CompareLess(v interface{}) interface{} {
 	switch t := v.(type) {
 	case int:
 		return t < toInt(n.opValue)
@@ -231,7 +221,7 @@ func (n *Node) CompareLess(v interface{}) bool {
 	return false
 }
 
-func (n *Node) CompareGreaterEqual(v interface{}) bool {
+func (n *Node) CompareGreaterEqual(v interface{}) interface{} {
 	switch t := v.(type) {
 	case int:
 		return t >= toInt(n.opValue)
@@ -246,7 +236,7 @@ func (n *Node) CompareGreaterEqual(v interface{}) bool {
 	return false
 }
 
-func (n *Node) CompareLessEqual(v interface{}) bool {
+func (n *Node) CompareLessEqual(v interface{}) interface{} {
 	switch t := v.(type) {
 	case int:
 		return t <= toInt(n.opValue)
@@ -261,8 +251,56 @@ func (n *Node) CompareLessEqual(v interface{}) bool {
 	return false
 }
 
-func (n *Node) CompareMatch(v interface{}) bool {
+func (n *Node) CompareMatch(v interface{}) interface{} {
 	return n.opValue.(*regexp.Regexp).MatchString(toString(v))
+}
+
+func (n *Node) ValueAdd(v interface{}) interface{} {
+	switch t := v.(type) {
+	case int:
+		return t + toInt(n.opValue)
+
+	case float64:
+		return int(t + toFloat(n.opValue))
+	}
+
+	return false
+}
+
+func (n *Node) ValueSub(v interface{}) interface{} {
+	switch t := v.(type) {
+	case int:
+		return t - toInt(n.opValue)
+
+	case float64:
+		return int(t - toFloat(n.opValue))
+	}
+
+	return false
+}
+
+func (n *Node) ValueMul(v interface{}) interface{} {
+	switch t := v.(type) {
+	case int:
+		return t * toInt(n.opValue)
+
+	case float64:
+		return int(t * toFloat(n.opValue))
+	}
+
+	return false
+}
+
+func (n *Node) ValueDiv(v interface{}) interface{} {
+	switch t := v.(type) {
+	case int:
+		return t / toInt(n.opValue)
+
+	case float64:
+		return int(t / toFloat(n.opValue))
+	}
+
+	return false
 }
 
 // Processor defines the JsonPath grammar processor
@@ -293,6 +331,12 @@ func (p *Processor) addNode(n *Node) {
 func (p *Processor) VisitErrorNode(node antlr.ErrorNode) {
 	p.errors = true
 }
+
+// EnterPath is called when production path is entered.
+// This may be useful for debugging
+// func (p *Processor) EnterPath(ctx *parser.PathContext) {
+//        fmt.Println("PATH", ctx.GetText())
+//}
 
 //
 // ExitDotExpr is called when production dotExpr is exited.
@@ -412,7 +456,7 @@ func (p *Processor) ExitScriptExpr(ctx *parser.ScriptExprContext) {
 		return
 	}
 
-	p.addQueryNode(SCRIPT_EXPR, ctx.QueryExpr())
+	p.addExprNode(SCRIPT_EXPR, ctx.ValueExpr())
 }
 
 func (p *Processor) addQueryNode(t nodeType, q parser.IQueryExprContext) {
@@ -468,6 +512,31 @@ func (p *Processor) addQueryNode(t nodeType, q parser.IQueryExprContext) {
 
 			n.opValue = rc
 		}
+	}
+
+	p.addNode(&n)
+}
+
+func (p *Processor) addExprNode(t nodeType, q parser.IValueExprContext) {
+	n := Node{nodeType: t}
+
+	n.opId = q.GetName().GetText()
+	n.opName = q.GetOp().GetText()
+	n.opValue = asFloat(q.GetValue(), 0.0)
+
+	if q.(*parser.ValueExprContext).Length() != nil {
+		n.opId = TOKEN_LENGTH
+	}
+
+	switch n.opName {
+	case "+":
+		n.op = n.ValueAdd
+	case "-":
+		n.op = n.ValueSub
+	case "*":
+		n.op = n.ValueMul
+	case "/":
+		n.op = n.ValueDiv
 	}
 
 	p.addNode(&n)
@@ -716,7 +785,7 @@ func (p *Processor) Process(v interface{}, options ProcessOptions) interface{} {
 			for _, c := range a {
 				if m, ok := c.(map_type); ok {
 					if v, ok := m[n.opId]; ok {
-						if n.op(v) {
+						if n.op(v).(bool) {
 							res = append(res, m)
 						}
 					}
@@ -729,6 +798,22 @@ func (p *Processor) Process(v interface{}, options ProcessOptions) interface{} {
 				v = res
 			}
 
+		case SCRIPT_EXPR:
+			a, err := j.Array()
+			if err != nil {
+				fmt.Printf("expected array, got %v", j.Data())
+				v = nil
+				continue
+			}
+
+			var res int
+
+			if n.opId == TOKEN_LENGTH {
+				res = len(a)
+			}
+
+			i := n.op(res).(int)
+			v, _ = atIndex(i, a)
 		}
 	}
 

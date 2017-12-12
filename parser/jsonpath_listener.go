@@ -43,6 +43,9 @@ type JsonpathListener interface {
 	// EnterQueryExpr is called when entering the queryExpr production.
 	EnterQueryExpr(c *QueryExprContext)
 
+	// EnterValueExpr is called when entering the valueExpr production.
+	EnterValueExpr(c *ValueExprContext)
+
 	// ExitJsonpath is called when exiting the jsonpath production.
 	ExitJsonpath(c *JsonpathContext)
 
@@ -78,4 +81,7 @@ type JsonpathListener interface {
 
 	// ExitQueryExpr is called when exiting the queryExpr production.
 	ExitQueryExpr(c *QueryExprContext)
+
+	// ExitValueExpr is called when exiting the valueExpr production.
+	ExitValueExpr(c *ValueExprContext)
 }

@@ -24,6 +24,6 @@ func main() {
 		},
 	}
 
-	ret := p.Process(input)
+	ret := p.Process(input, jsonpath.Default)
 	fmt.Println(ret)
 }

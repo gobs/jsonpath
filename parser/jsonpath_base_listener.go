@@ -91,3 +91,9 @@ func (s *BaseJsonpathListener) EnterQueryExpr(ctx *QueryExprContext) {}
 
 // ExitQueryExpr is called when production queryExpr is exited.
 func (s *BaseJsonpathListener) ExitQueryExpr(ctx *QueryExprContext) {}
+
+// EnterValueExpr is called when production valueExpr is entered.
+func (s *BaseJsonpathListener) EnterValueExpr(ctx *ValueExprContext) {}
+
+// ExitValueExpr is called when production valueExpr is exited.
+func (s *BaseJsonpathListener) ExitValueExpr(ctx *ValueExprContext) {}
