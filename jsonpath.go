@@ -91,6 +91,23 @@ func toFloat(v interface{}) float64 {
 	return 0.0
 }
 
+func toBool(v interface{}) bool {
+	switch t := v.(type) {
+	case bool:
+		return t
+	case int:
+		return t > 0
+
+	case float64:
+		return int(t) > 0
+
+	case string:
+		return t != ""
+	}
+
+	return false
+}
+
 func toString(v interface{}) string {
 	return fmt.Sprintf("%v", v)
 }
@@ -163,6 +180,9 @@ func (n *Node) CompareExists(v interface{}) interface{} {
 
 func (n *Node) CompareEqual(v interface{}) interface{} {
 	switch t := v.(type) {
+	case bool:
+		return t == toBool(n.opValue)
+
 	case int:
 		return t == toInt(n.opValue)
 
@@ -178,6 +198,9 @@ func (n *Node) CompareEqual(v interface{}) interface{} {
 
 func (n *Node) CompareNotEqual(v interface{}) interface{} {
 	switch t := v.(type) {
+	case bool:
+		return t != toBool(n.opValue)
+
 	case int:
 		return t != toInt(n.opValue)
 
@@ -193,6 +216,9 @@ func (n *Node) CompareNotEqual(v interface{}) interface{} {
 
 func (n *Node) CompareGreater(v interface{}) interface{} {
 	switch t := v.(type) {
+	case bool:
+		return t == true && toBool(n.opValue) == false
+
 	case int:
 		return t > toInt(n.opValue)
 
@@ -208,6 +234,9 @@ func (n *Node) CompareGreater(v interface{}) interface{} {
 
 func (n *Node) CompareLess(v interface{}) interface{} {
 	switch t := v.(type) {
+	case bool:
+		return t == false && toBool(n.opValue) == true
+
 	case int:
 		return t < toInt(n.opValue)
 
@@ -223,6 +252,9 @@ func (n *Node) CompareLess(v interface{}) interface{} {
 
 func (n *Node) CompareGreaterEqual(v interface{}) interface{} {
 	switch t := v.(type) {
+	case bool:
+		return t == true || t == toBool(n.opValue)
+
 	case int:
 		return t >= toInt(n.opValue)
 
@@ -238,6 +270,9 @@ func (n *Node) CompareGreaterEqual(v interface{}) interface{} {
 
 func (n *Node) CompareLessEqual(v interface{}) interface{} {
 	switch t := v.(type) {
+	case bool:
+		return t == false || t == toBool(n.opValue)
+
 	case int:
 		return t <= toInt(n.opValue)
 
@@ -470,9 +505,22 @@ func (p *Processor) addQueryNode(t nodeType, q parser.IQueryExprContext) {
 		n.opId = q.GetName().GetText()
 		n.opName = q.GetOp().GetText()
 
-		if q.(*parser.QueryExprContext).QUOTED() != nil {
+		switch {
+		case q.(*parser.QueryExprContext).QUOTED() != nil:
 			n.opValue = strings.Trim(q.GetValue().GetText(), "'")
-		} else if n.opName != TOKEN_REGEX {
+
+		case n.opName == TOKEN_REGEX:
+
+		case q.GetValue().GetText() == "true":
+			n.opValue = true
+
+		case q.GetValue().GetText() == "false":
+			n.opValue = false
+
+		case q.GetValue().GetText() == "null":
+			n.opValue = nil
+
+		default:
 			n.opValue = asFloat(q.GetValue(), 0.0)
 		}
 

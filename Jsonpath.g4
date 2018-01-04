@@ -40,7 +40,7 @@ scriptExpr : '(' valueExpr ')'
            ;
 
 queryExpr : '@.' exists=Identifier
-          | '@.' name=Identifier op=COMP value=(INT | NUMBER | QUOTED)
+          | '@.' name=Identifier op=COMP value=(INT | NUMBER | QUOTED | 'true' | 'false' | 'null')
           | '@.' name=Identifier op='=~' value=REGEX
           ;
 

@@ -1,4 +1,4 @@
-// Generated from Jsonpath.g4 by ANTLR 4.7.
+// Code generated from Jsonpath.g4 by ANTLR 4.7.1. DO NOT EDIT.
 
 package parser // Jsonpath
 import "github.com/antlr/antlr4/runtime/Go/antlr"
