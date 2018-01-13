@@ -609,7 +609,7 @@ func (p *Processor) find(names set_type, j interface{}, enhanced bool) (ret []in
 	var a []interface{}
 
 	addele := true
-	any := names.Contains(TOKEN_ANY)
+	any := names.Contains(TOKEN_ANY) || len(names) == 0
 
 	if aj, ok := j.(array_type); ok {
 		a = aj
