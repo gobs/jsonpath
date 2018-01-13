@@ -33,7 +33,8 @@ namesExpr: QUOTED (',' QUOTED)*
 starExpr : STAR
          ;
 
-filterExpr : '?(' queryExpr ')'
+filterExpr : FilterTrue queryExpr ')'
+           | FilterFalse queryExpr ')'
            ;
 
 scriptExpr : '(' valueExpr ')'
@@ -78,6 +79,12 @@ DOTS : '.'
 
 STAR : '*'
      ;
+
+FilterTrue : '?('
+           ;
+
+FilterFalse : '!('
+            ;
 
 WS : [ \t\n\r]+ -> skip
    ;

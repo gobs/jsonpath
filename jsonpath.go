@@ -138,8 +138,9 @@ type Node struct {
 	nodeType nodeType
 
 	opId    string      // for DESCENDANT/FILTER_EXPR/SCRIPT_EXPR
-	opValue interface{} // for FILTER_EXP/SCRIPT_EXPR
+	opValue interface{} // for FILTER_EXPR/SCRIPT_EXPR
 	op      Operation
+	opNot   bool   // for FILTER_EXPR, negate the result
 	opName  string // used for debugging
 
 	names            set_type // for CHILD
@@ -165,7 +166,11 @@ func (n Node) String() string {
 		return fmt.Sprintf("DESCENDANT %v", n.names.List())
 
 	case FILTER_EXPR:
-		return fmt.Sprintf("FILTER %v %v %v", n.opId, n.opName, n.opValue)
+		if n.opNot {
+			return fmt.Sprintf("FILTER NOT %v %v %v", n.opId, n.opName, n.opValue)
+		} else {
+			return fmt.Sprintf("FILTER %v %v %v", n.opId, n.opName, n.opValue)
+		}
 
 	case SCRIPT_EXPR:
 		return fmt.Sprintf("SCRIPT %v %v %v", n.opId, n.opName, n.opValue)
@@ -480,7 +485,7 @@ func (p *Processor) ExitFilterExpr(ctx *parser.FilterExprContext) {
 		return
 	}
 
-	p.addQueryNode(FILTER_EXPR, ctx.QueryExpr())
+	p.addQueryNode(FILTER_EXPR, ctx.QueryExpr(), ctx.FilterFalse() != nil)
 }
 
 //
@@ -494,8 +499,8 @@ func (p *Processor) ExitScriptExpr(ctx *parser.ScriptExprContext) {
 	p.addExprNode(SCRIPT_EXPR, ctx.ValueExpr())
 }
 
-func (p *Processor) addQueryNode(t nodeType, q parser.IQueryExprContext) {
-	n := Node{nodeType: t}
+func (p *Processor) addQueryNode(t nodeType, q parser.IQueryExprContext, negate bool) {
+	n := Node{nodeType: t, opNot: negate}
 
 	if q.GetExists() != nil {
 		n.opId = q.GetExists().GetText()
@@ -832,10 +837,19 @@ func (p *Processor) Process(v interface{}, options ProcessOptions) interface{} {
 
 			for _, c := range a {
 				if m, ok := c.(map_type); ok {
+					var match bool
+
 					if v, ok := m[n.opId]; ok {
-						if n.op(v).(bool) {
-							res = append(res, m)
+						match = n.op(v).(bool)
+						if n.opNot {
+							match = !match
 						}
+					} else if n.opName == "exists" && n.opNot {
+						match = true
+					}
+
+					if match {
+						res = append(res, m)
 					}
 				}
 			}
