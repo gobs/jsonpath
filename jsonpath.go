@@ -452,9 +452,9 @@ func (p *Processor) ExitNamesExpr(ctx *parser.NamesExprContext) {
 	last := len(p.Nodes) - 1
 	if last >= 0 && len(p.Nodes[last].names) == 0 {
 		n, p.Nodes = p.Nodes[last], p.Nodes[:last]
-                if n.names == nil {
-                    n.names = set_type{}
-                }
+		if n.names == nil {
+			n.names = set_type{}
+		}
 	}
 
 	for _, i := range ctx.AllQUOTED() {
