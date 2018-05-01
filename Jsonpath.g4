@@ -55,7 +55,7 @@ OP : '+' | '-' | '/' | '*'
 COMP : '>' | '>=' | '<' | '<=' | '==' | '!='
      ;
 
-Identifier : [a-zA-Z][a-zA-Z0-9_]*
+Identifier : [a-zA-Z_][a-zA-Z0-9_]*
            ;
 
 Length : 'length()'
