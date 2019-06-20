@@ -1,4 +1,4 @@
-//go:generate antlr4 -Dlanguage=Go -package parser -o parser Jsonpath.g4
+//go:generate antlr -Dlanguage=Go -package parser -o parser Jsonpath.g4
 package jsonpath
 
 import (
@@ -18,6 +18,7 @@ const (
 	Default  ProcessOptions = 0
 	Enhanced ProcessOptions = 1
 	Collapse ProcessOptions = 2
+	Flat     ProcessOptions = 4
 )
 
 type map_type = map[string]interface{}
@@ -611,8 +612,10 @@ func (p *Processor) Parse(expr string) bool {
 	return !p.errors
 }
 
-func (p *Processor) find(names set_type, j interface{}, enhanced bool) (ret []interface{}) {
-	//fmt.Println("find", names.List(), j)
+func (p *Processor) find(names set_type, j interface{}, enhanced, flat bool) (ret []interface{}) {
+	if flat {
+		fmt.Println("find", names.List(), j)
+	}
 
 	var a []interface{}
 
@@ -635,27 +638,33 @@ func (p *Processor) find(names set_type, j interface{}, enhanced bool) (ret []in
 		case map_type:
 			l := len(names)
 			mret := map_type{}
+			aret := array_type{}
 
 			addresult := func(k string, v interface{}) {
 				if enhanced && l > 1 {
 					mret[k] = v
+				} else if flat {
+					aret = append(aret, v)
 				} else {
 					ret = append(ret, v)
 				}
 			}
 
 			for k, v := range t {
-				if names.Contains(k) {
+				if names.Contains(k) || any {
 					addresult(k, v)
-				} else {
-					if any {
-						addresult(k, v)
-					}
 				}
 
 				switch v.(type) {
-				case map_type, array_type:
-					res := p.find(names, v, enhanced)
+				case map_type:
+					res := p.find(names, v, enhanced, flat)
+					if flat {
+						aret = append(aret, res...)
+					} else {
+						ret = append(ret, res...)
+					}
+				case array_type:
+					res := p.find(names, v, enhanced, flat)
 					ret = append(ret, res...)
 				}
 			}
@@ -663,9 +672,12 @@ func (p *Processor) find(names set_type, j interface{}, enhanced bool) (ret []in
 			if len(mret) > 0 {
 				ret = append(ret, mret)
 			}
+			if len(aret) > 0 {
+				ret = append(ret, aret)
+			}
 
 		case array_type:
-			res := p.find(names, t, enhanced)
+			res := p.find(names, t, enhanced, flat)
 			ret = append(ret, res...)
 		}
 	}
@@ -708,6 +720,7 @@ func (p *Processor) Process(v interface{}, options ProcessOptions) interface{} {
 
 	enhanced := (options & Enhanced) == Enhanced
 	collapse := (options & Collapse) == Collapse
+	flat := (options & Flat) == Flat
 
 	if j, ok := v.(*simplejson.Json); ok {
 		v = j.Data()
@@ -809,7 +822,7 @@ func (p *Processor) Process(v interface{}, options ProcessOptions) interface{} {
 			}
 
 		case DESCENDANT:
-			v = p.find(n.names, v, enhanced)
+			v = p.find(n.names, v, enhanced, flat)
 			if len(v.(array_type)) == 1 && s < last {
 				v = v.(array_type)[0]
 			}
