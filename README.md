@@ -1,7 +1,7 @@
 # jsonpath
 Minimalistic implementation of jsonpath, based on http://goessner.net/articles/JsonPath/.
 
-But a better grammar definition is [here](https://info.teradata.com/htmlpubs/DB_TTU_16_00/index.html#page/Teradata_Data_Types/B035-1150-160K/pkq1472240532839.html).
+But a better grammar definition is [here](https://docs.teradata.com/reader/C8cVEJ54PO4~YXWXeXGvsA/d1Z4WflKhNVwuRatmOgzig).
 
 ## Documentation
 
