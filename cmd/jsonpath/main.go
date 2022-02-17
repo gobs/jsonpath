@@ -4,6 +4,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"strings"
 
@@ -56,12 +58,29 @@ func main() {
 		return
 	}
 
-	var inf *os.File
+	var inf io.Reader
 
-	if flag.Arg(1) == "--" { // read from stdin
+	infile := flag.Arg(1)
+
+	if infile == "--" { // read from stdin
 		inf = os.Stdin
+	} else if strings.Contains(infile, "://") {
+		res, err := http.Get(infile)
+		if err != nil {
+			fatal(err)
+		}
+
+		if res.Body != nil {
+			defer res.Body.Close()
+		}
+
+		if res.StatusCode != 200 {
+			fatal(res.Status)
+		}
+
+		inf = res.Body
 	} else {
-		f, err := os.Open(flag.Arg(1))
+		f, err := os.Open(infile)
 		if err != nil {
 			fatal(err)
 		}
