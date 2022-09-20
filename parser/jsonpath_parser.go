@@ -1,113 +1,134 @@
-// Code generated from Jsonpath.g4 by ANTLR 4.7.2. DO NOT EDIT.
+// Code generated from java-escape by ANTLR 4.11.1. DO NOT EDIT.
 
 package parser // Jsonpath
 import (
 	"fmt"
-	"reflect"
 	"strconv"
+	"sync"
 
-	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/antlr/antlr4/runtime/Go/antlr/v4"
 )
 
 // Suppress unused import errors
 var _ = fmt.Printf
-var _ = reflect.Copy
 var _ = strconv.Itoa
-
-var parserATN = []uint16{
-	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 27, 123,
-	4, 2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 4, 5, 9, 5, 4, 6, 9, 6, 4, 7, 9, 7,
-	4, 8, 9, 8, 4, 9, 9, 9, 4, 10, 9, 10, 4, 11, 9, 11, 4, 12, 9, 12, 4, 13,
-	9, 13, 4, 14, 9, 14, 3, 2, 3, 2, 3, 2, 3, 2, 3, 3, 6, 3, 34, 10, 3, 13,
-	3, 14, 3, 35, 3, 4, 3, 4, 5, 4, 40, 10, 4, 3, 5, 3, 5, 3, 5, 5, 5, 45,
-	10, 5, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 5, 6, 54, 10, 6, 3, 6,
-	3, 6, 3, 7, 5, 7, 59, 10, 7, 3, 7, 3, 7, 3, 7, 3, 7, 5, 7, 65, 10, 7, 5,
-	7, 67, 10, 7, 3, 8, 3, 8, 3, 8, 7, 8, 72, 10, 8, 12, 8, 14, 8, 75, 11,
-	8, 3, 9, 3, 9, 3, 9, 7, 9, 80, 10, 9, 12, 9, 14, 9, 83, 11, 9, 3, 10, 3,
-	10, 3, 11, 3, 11, 3, 11, 3, 11, 3, 11, 3, 11, 3, 11, 3, 11, 5, 11, 95,
-	10, 11, 3, 12, 3, 12, 3, 12, 3, 12, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13,
-	3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 5, 13, 111, 10, 13, 3, 14, 3, 14, 3,
-	14, 3, 14, 3, 14, 3, 14, 3, 14, 3, 14, 5, 14, 121, 10, 14, 3, 14, 2, 2,
-	15, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 2, 5, 4, 2, 17, 18,
-	24, 24, 4, 2, 11, 13, 19, 21, 3, 2, 19, 20, 2, 127, 2, 28, 3, 2, 2, 2,
-	4, 33, 3, 2, 2, 2, 6, 39, 3, 2, 2, 2, 8, 44, 3, 2, 2, 2, 10, 46, 3, 2,
-	2, 2, 12, 58, 3, 2, 2, 2, 14, 68, 3, 2, 2, 2, 16, 76, 3, 2, 2, 2, 18, 84,
-	3, 2, 2, 2, 20, 94, 3, 2, 2, 2, 22, 96, 3, 2, 2, 2, 24, 110, 3, 2, 2, 2,
-	26, 120, 3, 2, 2, 2, 28, 29, 7, 3, 2, 2, 29, 30, 5, 4, 3, 2, 30, 31, 7,
-	2, 2, 3, 31, 3, 3, 2, 2, 2, 32, 34, 5, 6, 4, 2, 33, 32, 3, 2, 2, 2, 34,
-	35, 3, 2, 2, 2, 35, 33, 3, 2, 2, 2, 35, 36, 3, 2, 2, 2, 36, 5, 3, 2, 2,
-	2, 37, 40, 5, 8, 5, 2, 38, 40, 5, 10, 6, 2, 39, 37, 3, 2, 2, 2, 39, 38,
-	3, 2, 2, 2, 40, 7, 3, 2, 2, 2, 41, 45, 7, 23, 2, 2, 42, 43, 7, 23, 2, 2,
-	43, 45, 9, 2, 2, 2, 44, 41, 3, 2, 2, 2, 44, 42, 3, 2, 2, 2, 45, 9, 3, 2,
-	2, 2, 46, 53, 7, 4, 2, 2, 47, 54, 5, 18, 10, 2, 48, 54, 5, 12, 7, 2, 49,
-	54, 5, 14, 8, 2, 50, 54, 5, 16, 9, 2, 51, 54, 5, 20, 11, 2, 52, 54, 5,
-	22, 12, 2, 53, 47, 3, 2, 2, 2, 53, 48, 3, 2, 2, 2, 53, 49, 3, 2, 2, 2,
-	53, 50, 3, 2, 2, 2, 53, 51, 3, 2, 2, 2, 53, 52, 3, 2, 2, 2, 53, 54, 3,
-	2, 2, 2, 54, 55, 3, 2, 2, 2, 55, 56, 7, 5, 2, 2, 56, 11, 3, 2, 2, 2, 57,
-	59, 7, 19, 2, 2, 58, 57, 3, 2, 2, 2, 58, 59, 3, 2, 2, 2, 59, 60, 3, 2,
-	2, 2, 60, 66, 7, 6, 2, 2, 61, 64, 7, 19, 2, 2, 62, 63, 7, 6, 2, 2, 63,
-	65, 7, 19, 2, 2, 64, 62, 3, 2, 2, 2, 64, 65, 3, 2, 2, 2, 65, 67, 3, 2,
-	2, 2, 66, 61, 3, 2, 2, 2, 66, 67, 3, 2, 2, 2, 67, 13, 3, 2, 2, 2, 68, 73,
-	7, 19, 2, 2, 69, 70, 7, 7, 2, 2, 70, 72, 7, 19, 2, 2, 71, 69, 3, 2, 2,
-	2, 72, 75, 3, 2, 2, 2, 73, 71, 3, 2, 2, 2, 73, 74, 3, 2, 2, 2, 74, 15,
-	3, 2, 2, 2, 75, 73, 3, 2, 2, 2, 76, 81, 7, 21, 2, 2, 77, 78, 7, 7, 2, 2,
-	78, 80, 7, 21, 2, 2, 79, 77, 3, 2, 2, 2, 80, 83, 3, 2, 2, 2, 81, 79, 3,
-	2, 2, 2, 81, 82, 3, 2, 2, 2, 82, 17, 3, 2, 2, 2, 83, 81, 3, 2, 2, 2, 84,
-	85, 7, 24, 2, 2, 85, 19, 3, 2, 2, 2, 86, 87, 7, 25, 2, 2, 87, 88, 5, 24,
-	13, 2, 88, 89, 7, 8, 2, 2, 89, 95, 3, 2, 2, 2, 90, 91, 7, 26, 2, 2, 91,
-	92, 5, 24, 13, 2, 92, 93, 7, 8, 2, 2, 93, 95, 3, 2, 2, 2, 94, 86, 3, 2,
-	2, 2, 94, 90, 3, 2, 2, 2, 95, 21, 3, 2, 2, 2, 96, 97, 7, 9, 2, 2, 97, 98,
-	5, 26, 14, 2, 98, 99, 7, 8, 2, 2, 99, 23, 3, 2, 2, 2, 100, 101, 7, 10,
-	2, 2, 101, 111, 7, 17, 2, 2, 102, 103, 7, 10, 2, 2, 103, 104, 7, 17, 2,
-	2, 104, 105, 7, 16, 2, 2, 105, 111, 9, 3, 2, 2, 106, 107, 7, 10, 2, 2,
-	107, 108, 7, 17, 2, 2, 108, 109, 7, 14, 2, 2, 109, 111, 7, 22, 2, 2, 110,
-	100, 3, 2, 2, 2, 110, 102, 3, 2, 2, 2, 110, 106, 3, 2, 2, 2, 111, 25, 3,
-	2, 2, 2, 112, 113, 7, 10, 2, 2, 113, 114, 7, 17, 2, 2, 114, 115, 7, 15,
-	2, 2, 115, 121, 9, 4, 2, 2, 116, 117, 7, 10, 2, 2, 117, 118, 7, 18, 2,
-	2, 118, 119, 7, 15, 2, 2, 119, 121, 9, 4, 2, 2, 120, 112, 3, 2, 2, 2, 120,
-	116, 3, 2, 2, 2, 121, 27, 3, 2, 2, 2, 14, 35, 39, 44, 53, 58, 64, 66, 73,
-	81, 94, 110, 120,
-}
-var deserializer = antlr.NewATNDeserializer(nil)
-var deserializedATN = deserializer.DeserializeFromUInt16(parserATN)
-
-var literalNames = []string{
-	"", "'$'", "'['", "']'", "':'", "','", "')'", "'('", "'@.'", "'true'",
-	"'false'", "'null'", "'=~'", "", "", "", "'length()'", "", "", "", "",
-	"", "'*'", "'?('", "'!('",
-}
-var symbolicNames = []string{
-	"", "", "", "", "", "", "", "", "", "", "", "", "", "OP", "COMP", "Identifier",
-	"Length", "INT", "NUMBER", "QUOTED", "REGEX", "DOTS", "STAR", "FilterTrue",
-	"FilterFalse", "WS",
-}
-
-var ruleNames = []string{
-	"jsonpath", "path", "nodeExpr", "dotExpr", "selectExpr", "rangeExpr", "itemsExpr",
-	"namesExpr", "starExpr", "filterExpr", "scriptExpr", "queryExpr", "valueExpr",
-}
-var decisionToDFA = make([]*antlr.DFA, len(deserializedATN.DecisionToState))
-
-func init() {
-	for index, ds := range deserializedATN.DecisionToState {
-		decisionToDFA[index] = antlr.NewDFA(ds, index)
-	}
-}
+var _ = sync.Once{}
 
 type JsonpathParser struct {
 	*antlr.BaseParser
 }
 
+var jsonpathParserStaticData struct {
+	once                   sync.Once
+	serializedATN          []int32
+	literalNames           []string
+	symbolicNames          []string
+	ruleNames              []string
+	predictionContextCache *antlr.PredictionContextCache
+	atn                    *antlr.ATN
+	decisionToDFA          []*antlr.DFA
+}
+
+func jsonpathParserInit() {
+	staticData := &jsonpathParserStaticData
+	staticData.literalNames = []string{
+		"", "'$'", "'['", "']'", "':'", "','", "')'", "'('", "'@.'", "'true'",
+		"'false'", "'null'", "'=~'", "", "", "", "'length()'", "", "", "", "",
+		"", "'*'", "'?('", "'!('",
+	}
+	staticData.symbolicNames = []string{
+		"", "", "", "", "", "", "", "", "", "", "", "", "", "OP", "COMP", "Identifier",
+		"Length", "INT", "NUMBER", "QUOTED", "REGEX", "DOTS", "STAR", "FilterTrue",
+		"FilterFalse", "WS",
+	}
+	staticData.ruleNames = []string{
+		"jsonpath", "path", "nodeExpr", "dotExpr", "selectExpr", "rangeExpr",
+		"itemsExpr", "namesExpr", "starExpr", "filterExpr", "scriptExpr", "queryExpr",
+		"valueExpr",
+	}
+	staticData.predictionContextCache = antlr.NewPredictionContextCache()
+	staticData.serializedATN = []int32{
+		4, 1, 25, 121, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
+		4, 2, 5, 7, 5, 2, 6, 7, 6, 2, 7, 7, 7, 2, 8, 7, 8, 2, 9, 7, 9, 2, 10, 7,
+		10, 2, 11, 7, 11, 2, 12, 7, 12, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 4, 1, 32,
+		8, 1, 11, 1, 12, 1, 33, 1, 2, 1, 2, 3, 2, 38, 8, 2, 1, 3, 1, 3, 1, 3, 3,
+		3, 43, 8, 3, 1, 4, 1, 4, 1, 4, 1, 4, 1, 4, 1, 4, 1, 4, 3, 4, 52, 8, 4,
+		1, 4, 1, 4, 1, 5, 3, 5, 57, 8, 5, 1, 5, 1, 5, 1, 5, 1, 5, 3, 5, 63, 8,
+		5, 3, 5, 65, 8, 5, 1, 6, 1, 6, 1, 6, 5, 6, 70, 8, 6, 10, 6, 12, 6, 73,
+		9, 6, 1, 7, 1, 7, 1, 7, 5, 7, 78, 8, 7, 10, 7, 12, 7, 81, 9, 7, 1, 8, 1,
+		8, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 3, 9, 93, 8, 9, 1, 10,
+		1, 10, 1, 10, 1, 10, 1, 11, 1, 11, 1, 11, 1, 11, 1, 11, 1, 11, 1, 11, 1,
+		11, 1, 11, 1, 11, 3, 11, 109, 8, 11, 1, 12, 1, 12, 1, 12, 1, 12, 1, 12,
+		1, 12, 1, 12, 1, 12, 3, 12, 119, 8, 12, 1, 12, 0, 0, 13, 0, 2, 4, 6, 8,
+		10, 12, 14, 16, 18, 20, 22, 24, 0, 3, 2, 0, 15, 16, 22, 22, 2, 0, 9, 11,
+		17, 19, 1, 0, 17, 18, 125, 0, 26, 1, 0, 0, 0, 2, 31, 1, 0, 0, 0, 4, 37,
+		1, 0, 0, 0, 6, 42, 1, 0, 0, 0, 8, 44, 1, 0, 0, 0, 10, 56, 1, 0, 0, 0, 12,
+		66, 1, 0, 0, 0, 14, 74, 1, 0, 0, 0, 16, 82, 1, 0, 0, 0, 18, 92, 1, 0, 0,
+		0, 20, 94, 1, 0, 0, 0, 22, 108, 1, 0, 0, 0, 24, 118, 1, 0, 0, 0, 26, 27,
+		5, 1, 0, 0, 27, 28, 3, 2, 1, 0, 28, 29, 5, 0, 0, 1, 29, 1, 1, 0, 0, 0,
+		30, 32, 3, 4, 2, 0, 31, 30, 1, 0, 0, 0, 32, 33, 1, 0, 0, 0, 33, 31, 1,
+		0, 0, 0, 33, 34, 1, 0, 0, 0, 34, 3, 1, 0, 0, 0, 35, 38, 3, 6, 3, 0, 36,
+		38, 3, 8, 4, 0, 37, 35, 1, 0, 0, 0, 37, 36, 1, 0, 0, 0, 38, 5, 1, 0, 0,
+		0, 39, 43, 5, 21, 0, 0, 40, 41, 5, 21, 0, 0, 41, 43, 7, 0, 0, 0, 42, 39,
+		1, 0, 0, 0, 42, 40, 1, 0, 0, 0, 43, 7, 1, 0, 0, 0, 44, 51, 5, 2, 0, 0,
+		45, 52, 3, 16, 8, 0, 46, 52, 3, 10, 5, 0, 47, 52, 3, 12, 6, 0, 48, 52,
+		3, 14, 7, 0, 49, 52, 3, 18, 9, 0, 50, 52, 3, 20, 10, 0, 51, 45, 1, 0, 0,
+		0, 51, 46, 1, 0, 0, 0, 51, 47, 1, 0, 0, 0, 51, 48, 1, 0, 0, 0, 51, 49,
+		1, 0, 0, 0, 51, 50, 1, 0, 0, 0, 51, 52, 1, 0, 0, 0, 52, 53, 1, 0, 0, 0,
+		53, 54, 5, 3, 0, 0, 54, 9, 1, 0, 0, 0, 55, 57, 5, 17, 0, 0, 56, 55, 1,
+		0, 0, 0, 56, 57, 1, 0, 0, 0, 57, 58, 1, 0, 0, 0, 58, 64, 5, 4, 0, 0, 59,
+		62, 5, 17, 0, 0, 60, 61, 5, 4, 0, 0, 61, 63, 5, 17, 0, 0, 62, 60, 1, 0,
+		0, 0, 62, 63, 1, 0, 0, 0, 63, 65, 1, 0, 0, 0, 64, 59, 1, 0, 0, 0, 64, 65,
+		1, 0, 0, 0, 65, 11, 1, 0, 0, 0, 66, 71, 5, 17, 0, 0, 67, 68, 5, 5, 0, 0,
+		68, 70, 5, 17, 0, 0, 69, 67, 1, 0, 0, 0, 70, 73, 1, 0, 0, 0, 71, 69, 1,
+		0, 0, 0, 71, 72, 1, 0, 0, 0, 72, 13, 1, 0, 0, 0, 73, 71, 1, 0, 0, 0, 74,
+		79, 5, 19, 0, 0, 75, 76, 5, 5, 0, 0, 76, 78, 5, 19, 0, 0, 77, 75, 1, 0,
+		0, 0, 78, 81, 1, 0, 0, 0, 79, 77, 1, 0, 0, 0, 79, 80, 1, 0, 0, 0, 80, 15,
+		1, 0, 0, 0, 81, 79, 1, 0, 0, 0, 82, 83, 5, 22, 0, 0, 83, 17, 1, 0, 0, 0,
+		84, 85, 5, 23, 0, 0, 85, 86, 3, 22, 11, 0, 86, 87, 5, 6, 0, 0, 87, 93,
+		1, 0, 0, 0, 88, 89, 5, 24, 0, 0, 89, 90, 3, 22, 11, 0, 90, 91, 5, 6, 0,
+		0, 91, 93, 1, 0, 0, 0, 92, 84, 1, 0, 0, 0, 92, 88, 1, 0, 0, 0, 93, 19,
+		1, 0, 0, 0, 94, 95, 5, 7, 0, 0, 95, 96, 3, 24, 12, 0, 96, 97, 5, 6, 0,
+		0, 97, 21, 1, 0, 0, 0, 98, 99, 5, 8, 0, 0, 99, 109, 5, 15, 0, 0, 100, 101,
+		5, 8, 0, 0, 101, 102, 5, 15, 0, 0, 102, 103, 5, 14, 0, 0, 103, 109, 7,
+		1, 0, 0, 104, 105, 5, 8, 0, 0, 105, 106, 5, 15, 0, 0, 106, 107, 5, 12,
+		0, 0, 107, 109, 5, 20, 0, 0, 108, 98, 1, 0, 0, 0, 108, 100, 1, 0, 0, 0,
+		108, 104, 1, 0, 0, 0, 109, 23, 1, 0, 0, 0, 110, 111, 5, 8, 0, 0, 111, 112,
+		5, 15, 0, 0, 112, 113, 5, 13, 0, 0, 113, 119, 7, 2, 0, 0, 114, 115, 5,
+		8, 0, 0, 115, 116, 5, 16, 0, 0, 116, 117, 5, 13, 0, 0, 117, 119, 7, 2,
+		0, 0, 118, 110, 1, 0, 0, 0, 118, 114, 1, 0, 0, 0, 119, 25, 1, 0, 0, 0,
+		12, 33, 37, 42, 51, 56, 62, 64, 71, 79, 92, 108, 118,
+	}
+	deserializer := antlr.NewATNDeserializer(nil)
+	staticData.atn = deserializer.Deserialize(staticData.serializedATN)
+	atn := staticData.atn
+	staticData.decisionToDFA = make([]*antlr.DFA, len(atn.DecisionToState))
+	decisionToDFA := staticData.decisionToDFA
+	for index, state := range atn.DecisionToState {
+		decisionToDFA[index] = antlr.NewDFA(state, index)
+	}
+}
+
+// JsonpathParserInit initializes any static state used to implement JsonpathParser. By default the
+// static state used to implement the parser is lazily initialized during the first call to
+// NewJsonpathParser(). You can call this function if you wish to initialize the static state ahead
+// of time.
+func JsonpathParserInit() {
+	staticData := &jsonpathParserStaticData
+	staticData.once.Do(jsonpathParserInit)
+}
+
+// NewJsonpathParser produces a new parser instance for the optional input antlr.TokenStream.
 func NewJsonpathParser(input antlr.TokenStream) *JsonpathParser {
+	JsonpathParserInit()
 	this := new(JsonpathParser)
-
 	this.BaseParser = antlr.NewBaseParser(input)
-
-	this.Interpreter = antlr.NewParserATNSimulator(this, deserializedATN, decisionToDFA, antlr.NewPredictionContextCache())
-	this.RuleNames = ruleNames
-	this.LiteralNames = literalNames
-	this.SymbolicNames = symbolicNames
-	this.GrammarFileName = "Jsonpath.g4"
+	staticData := &jsonpathParserStaticData
+	this.Interpreter = antlr.NewParserATNSimulator(this, staticData.atn, staticData.decisionToDFA, staticData.predictionContextCache)
+	this.RuleNames = staticData.ruleNames
+	this.LiteralNames = staticData.literalNames
+	this.SymbolicNames = staticData.symbolicNames
+	this.GrammarFileName = "java-escape"
 
 	return this
 }
@@ -198,7 +219,13 @@ func NewJsonpathContext(parser antlr.Parser, parent antlr.ParserRuleContext, inv
 func (s *JsonpathContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *JsonpathContext) Path() IPathContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IPathContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IPathContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -232,6 +259,9 @@ func (s *JsonpathContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 func (p *JsonpathParser) Jsonpath() (localctx IJsonpathContext) {
+	this := p
+	_ = this
+
 	localctx = NewJsonpathContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 0, JsonpathParserRULE_jsonpath)
 
@@ -307,12 +337,20 @@ func NewPathContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokin
 func (s *PathContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *PathContext) AllNodeExpr() []INodeExprContext {
-	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*INodeExprContext)(nil)).Elem())
-	var tst = make([]INodeExprContext, len(ts))
+	children := s.GetChildren()
+	len := 0
+	for _, ctx := range children {
+		if _, ok := ctx.(INodeExprContext); ok {
+			len++
+		}
+	}
 
-	for i, t := range ts {
-		if t != nil {
+	tst := make([]INodeExprContext, len)
+	i := 0
+	for _, ctx := range children {
+		if t, ok := ctx.(INodeExprContext); ok {
 			tst[i] = t.(INodeExprContext)
+			i++
 		}
 	}
 
@@ -320,7 +358,17 @@ func (s *PathContext) AllNodeExpr() []INodeExprContext {
 }
 
 func (s *PathContext) NodeExpr(i int) INodeExprContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*INodeExprContext)(nil)).Elem(), i)
+	var t antlr.RuleContext
+	j := 0
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(INodeExprContext); ok {
+			if j == i {
+				t = ctx.(antlr.RuleContext)
+				break
+			}
+			j++
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -350,6 +398,9 @@ func (s *PathContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 func (p *JsonpathParser) Path() (localctx IPathContext) {
+	this := p
+	_ = this
+
 	localctx = NewPathContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 2, JsonpathParserRULE_path)
 	var _la int
@@ -428,7 +479,13 @@ func NewNodeExprContext(parser antlr.Parser, parent antlr.ParserRuleContext, inv
 func (s *NodeExprContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *NodeExprContext) DotExpr() IDotExprContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IDotExprContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IDotExprContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -438,7 +495,13 @@ func (s *NodeExprContext) DotExpr() IDotExprContext {
 }
 
 func (s *NodeExprContext) SelectExpr() ISelectExprContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*ISelectExprContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(ISelectExprContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -468,6 +531,9 @@ func (s *NodeExprContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 func (p *JsonpathParser) NodeExpr() (localctx INodeExprContext) {
+	this := p
+	_ = this
+
 	localctx = NewNodeExprContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 4, JsonpathParserRULE_nodeExpr)
 
@@ -587,6 +653,9 @@ func (s *DotExprContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 func (p *JsonpathParser) DotExpr() (localctx IDotExprContext) {
+	this := p
+	_ = this
+
 	localctx = NewDotExprContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 6, JsonpathParserRULE_dotExpr)
 	var _la int
@@ -627,7 +696,7 @@ func (p *JsonpathParser) DotExpr() (localctx IDotExprContext) {
 			p.SetState(41)
 			_la = p.GetTokenStream().LA(1)
 
-			if !(((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<JsonpathParserIdentifier)|(1<<JsonpathParserLength)|(1<<JsonpathParserSTAR))) != 0) {
+			if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&4292608) != 0) {
 				p.GetErrorHandler().RecoverInline(p)
 			} else {
 				p.GetErrorHandler().ReportMatch(p)
@@ -679,7 +748,13 @@ func NewSelectExprContext(parser antlr.Parser, parent antlr.ParserRuleContext, i
 func (s *SelectExprContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *SelectExprContext) StarExpr() IStarExprContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IStarExprContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IStarExprContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -689,7 +764,13 @@ func (s *SelectExprContext) StarExpr() IStarExprContext {
 }
 
 func (s *SelectExprContext) RangeExpr() IRangeExprContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IRangeExprContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IRangeExprContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -699,7 +780,13 @@ func (s *SelectExprContext) RangeExpr() IRangeExprContext {
 }
 
 func (s *SelectExprContext) ItemsExpr() IItemsExprContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IItemsExprContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IItemsExprContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -709,7 +796,13 @@ func (s *SelectExprContext) ItemsExpr() IItemsExprContext {
 }
 
 func (s *SelectExprContext) NamesExpr() INamesExprContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*INamesExprContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(INamesExprContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -719,7 +812,13 @@ func (s *SelectExprContext) NamesExpr() INamesExprContext {
 }
 
 func (s *SelectExprContext) FilterExpr() IFilterExprContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IFilterExprContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IFilterExprContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -729,7 +828,13 @@ func (s *SelectExprContext) FilterExpr() IFilterExprContext {
 }
 
 func (s *SelectExprContext) ScriptExpr() IScriptExprContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IScriptExprContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IScriptExprContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -759,6 +864,9 @@ func (s *SelectExprContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 func (p *JsonpathParser) SelectExpr() (localctx ISelectExprContext) {
+	this := p
+	_ = this
+
 	localctx = NewSelectExprContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 8, JsonpathParserRULE_selectExpr)
 
@@ -931,6 +1039,9 @@ func (s *RangeExprContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 func (p *JsonpathParser) RangeExpr() (localctx IRangeExprContext) {
+	this := p
+	_ = this
+
 	localctx = NewRangeExprContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 10, JsonpathParserRULE_rangeExpr)
 	var _la int
@@ -1073,6 +1184,9 @@ func (s *ItemsExprContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 func (p *JsonpathParser) ItemsExpr() (localctx IItemsExprContext) {
+	this := p
+	_ = this
+
 	localctx = NewItemsExprContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 12, JsonpathParserRULE_itemsExpr)
 	var _la int
@@ -1187,6 +1301,9 @@ func (s *NamesExprContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 func (p *JsonpathParser) NamesExpr() (localctx INamesExprContext) {
+	this := p
+	_ = this
+
 	localctx = NewNamesExprContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 14, JsonpathParserRULE_namesExpr)
 	var _la int
@@ -1297,6 +1414,9 @@ func (s *StarExprContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 func (p *JsonpathParser) StarExpr() (localctx IStarExprContext) {
+	this := p
+	_ = this
+
 	localctx = NewStarExprContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 16, JsonpathParserRULE_starExpr)
 
@@ -1368,7 +1488,13 @@ func (s *FilterExprContext) FilterTrue() antlr.TerminalNode {
 }
 
 func (s *FilterExprContext) QueryExpr() IQueryExprContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IQueryExprContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IQueryExprContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1402,6 +1528,9 @@ func (s *FilterExprContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 func (p *JsonpathParser) FilterExpr() (localctx IFilterExprContext) {
+	this := p
+	_ = this
+
 	localctx = NewFilterExprContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 18, JsonpathParserRULE_filterExpr)
 
@@ -1501,7 +1630,13 @@ func NewScriptExprContext(parser antlr.Parser, parent antlr.ParserRuleContext, i
 func (s *ScriptExprContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ScriptExprContext) ValueExpr() IValueExprContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IValueExprContext)(nil)).Elem(), 0)
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IValueExprContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
 
 	if t == nil {
 		return nil
@@ -1531,6 +1666,9 @@ func (s *ScriptExprContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 func (p *JsonpathParser) ScriptExpr() (localctx IScriptExprContext) {
+	this := p
+	_ = this
+
 	localctx = NewScriptExprContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 20, JsonpathParserRULE_scriptExpr)
 
@@ -1694,6 +1832,9 @@ func (s *QueryExprContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 func (p *JsonpathParser) QueryExpr() (localctx IQueryExprContext) {
+	this := p
+	_ = this
+
 	localctx = NewQueryExprContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 22, JsonpathParserRULE_queryExpr)
 	var _la int
@@ -1760,7 +1901,7 @@ func (p *JsonpathParser) QueryExpr() (localctx IQueryExprContext) {
 
 			_la = p.GetTokenStream().LA(1)
 
-			if !(((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<JsonpathParserT__8)|(1<<JsonpathParserT__9)|(1<<JsonpathParserT__10)|(1<<JsonpathParserINT)|(1<<JsonpathParserNUMBER)|(1<<JsonpathParserQUOTED))) != 0) {
+			if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&921088) != 0) {
 				var _ri = p.GetErrorHandler().RecoverInline(p)
 
 				localctx.(*QueryExprContext).value = _ri
@@ -1915,6 +2056,9 @@ func (s *ValueExprContext) ExitRule(listener antlr.ParseTreeListener) {
 }
 
 func (p *JsonpathParser) ValueExpr() (localctx IValueExprContext) {
+	this := p
+	_ = this
+
 	localctx = NewValueExprContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 24, JsonpathParserRULE_valueExpr)
 	var _la int
