@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/antlr/antlr4/runtime/Go/antlr/v4"
+	"github.com/antlr4-go/antlr/v4"
 	"github.com/gobs/jsonpath/parser"
 	"github.com/gobs/simplejson"
 )
@@ -366,9 +366,7 @@ func (p *Processor) addNode(n *Node) {
 	p.Nodes = append(p.Nodes, n)
 }
 
-//
 // VisitErrorNode is called when there is an error
-//
 func (p *Processor) VisitErrorNode(node antlr.ErrorNode) {
 	p.errors = true
 }
@@ -379,9 +377,7 @@ func (p *Processor) VisitErrorNode(node antlr.ErrorNode) {
 //        fmt.Println("PATH", ctx.GetText())
 //}
 
-//
 // ExitDotExpr is called when production dotExpr is exited.
-//
 func (p *Processor) ExitDotExpr(ctx *parser.DotExprContext) {
 	if p.errors {
 		return
@@ -408,9 +404,7 @@ func (p *Processor) ExitDotExpr(ctx *parser.DotExprContext) {
 	}
 }
 
-//
 // ExitItemsExpr is called when production itemsExpr is exited.
-//
 func (p *Processor) ExitItemsExpr(ctx *parser.ItemsExprContext) {
 	if p.errors {
 		return
@@ -425,9 +419,7 @@ func (p *Processor) ExitItemsExpr(ctx *parser.ItemsExprContext) {
 	p.addNode(&n)
 }
 
-//
 // ExitRangeExpr is called when production rangeExpr is exited.
-//
 func (p *Processor) ExitRangeExpr(ctx *parser.RangeExprContext) {
 	if p.errors {
 		return
@@ -440,9 +432,7 @@ func (p *Processor) ExitRangeExpr(ctx *parser.RangeExprContext) {
 		step:     asInt(ctx.GetStep(), 1)})
 }
 
-//
 // ExitNamesExpr is called when production namesExpr is exited.
-//
 func (p *Processor) ExitNamesExpr(ctx *parser.NamesExprContext) {
 	if p.errors {
 		return
@@ -465,9 +455,7 @@ func (p *Processor) ExitNamesExpr(ctx *parser.NamesExprContext) {
 	p.addNode(n)
 }
 
-//
 // ExitStarExpr is called when production starExpr is exited.
-//
 func (p *Processor) ExitStarExpr(ctx *parser.StarExprContext) {
 	if p.errors {
 		return
@@ -481,9 +469,7 @@ func (p *Processor) ExitStarExpr(ctx *parser.StarExprContext) {
 	}
 }
 
-//
 // ExitFilterExpr is called when production filterExpr is exited.
-//
 func (p *Processor) ExitFilterExpr(ctx *parser.FilterExprContext) {
 	if p.errors {
 		return
@@ -492,9 +478,7 @@ func (p *Processor) ExitFilterExpr(ctx *parser.FilterExprContext) {
 	p.addQueryNode(FILTER_EXPR, ctx.QueryExpr(), ctx.FilterFalse() != nil)
 }
 
-//
 // ExitScriptExpr is called when production scriptExpr is exited.
-//
 func (p *Processor) ExitScriptExpr(ctx *parser.ScriptExprContext) {
 	if p.errors {
 		return
@@ -599,9 +583,7 @@ func (p *Processor) addExprNode(t nodeType, q parser.IValueExprContext) {
 	p.addNode(&n)
 }
 
-//
 // Parse parses a JsonPath expression
-//
 func (p *Processor) Parse(expr string) bool {
 	input := antlr.NewInputStream(expr)
 	lexer := parser.NewJsonpathLexer(input)
@@ -710,9 +692,7 @@ func getLength(v interface{}) interface{} {
 	}
 }
 
-//
 // Process input object according to parsed JsonPath
-//
 func (p *Processor) Process(v interface{}, options ProcessOptions) interface{} {
 	if p.errors {
 		return nil

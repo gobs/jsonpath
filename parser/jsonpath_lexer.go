@@ -1,13 +1,12 @@
-// Code generated from java-escape by ANTLR 4.11.1. DO NOT EDIT.
+// Code generated from Jsonpath.g4 by ANTLR 4.13.1. DO NOT EDIT.
 
 package parser
 
 import (
 	"fmt"
+	"github.com/antlr4-go/antlr/v4"
 	"sync"
 	"unicode"
-
-	"github.com/antlr/antlr4/runtime/Go/antlr/v4"
 )
 
 // Suppress unused import error
@@ -22,44 +21,44 @@ type JsonpathLexer struct {
 	// TODO: EOF string
 }
 
-var jsonpathlexerLexerStaticData struct {
+var JsonpathLexerLexerStaticData struct {
 	once                   sync.Once
 	serializedATN          []int32
-	channelNames           []string
-	modeNames              []string
-	literalNames           []string
-	symbolicNames          []string
-	ruleNames              []string
-	predictionContextCache *antlr.PredictionContextCache
+	ChannelNames           []string
+	ModeNames              []string
+	LiteralNames           []string
+	SymbolicNames          []string
+	RuleNames              []string
+	PredictionContextCache *antlr.PredictionContextCache
 	atn                    *antlr.ATN
 	decisionToDFA          []*antlr.DFA
 }
 
 func jsonpathlexerLexerInit() {
-	staticData := &jsonpathlexerLexerStaticData
-	staticData.channelNames = []string{
+	staticData := &JsonpathLexerLexerStaticData
+	staticData.ChannelNames = []string{
 		"DEFAULT_TOKEN_CHANNEL", "HIDDEN",
 	}
-	staticData.modeNames = []string{
+	staticData.ModeNames = []string{
 		"DEFAULT_MODE",
 	}
-	staticData.literalNames = []string{
+	staticData.LiteralNames = []string{
 		"", "'$'", "'['", "']'", "':'", "','", "')'", "'('", "'@.'", "'true'",
 		"'false'", "'null'", "'=~'", "", "", "", "'length()'", "", "", "", "",
 		"", "'*'", "'?('", "'!('",
 	}
-	staticData.symbolicNames = []string{
+	staticData.SymbolicNames = []string{
 		"", "", "", "", "", "", "", "", "", "", "", "", "", "OP", "COMP", "Identifier",
 		"Length", "INT", "NUMBER", "QUOTED", "REGEX", "DOTS", "STAR", "FilterTrue",
 		"FilterFalse", "WS",
 	}
-	staticData.ruleNames = []string{
+	staticData.RuleNames = []string{
 		"T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", "T__8",
 		"T__9", "T__10", "T__11", "OP", "COMP", "Identifier", "Length", "INT",
 		"NUMBER", "QUOTED", "REGEX", "DOTS", "STAR", "FilterTrue", "FilterFalse",
 		"WS",
 	}
-	staticData.predictionContextCache = antlr.NewPredictionContextCache()
+	staticData.PredictionContextCache = antlr.NewPredictionContextCache()
 	staticData.serializedATN = []int32{
 		4, 0, 25, 177, 6, -1, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2,
 		4, 7, 4, 2, 5, 7, 5, 2, 6, 7, 6, 2, 7, 7, 7, 2, 8, 7, 8, 2, 9, 7, 9, 2,
@@ -158,7 +157,7 @@ func jsonpathlexerLexerInit() {
 // NewJsonpathLexer(). You can call this function if you wish to initialize the static state ahead
 // of time.
 func JsonpathLexerInit() {
-	staticData := &jsonpathlexerLexerStaticData
+	staticData := &JsonpathLexerLexerStaticData
 	staticData.once.Do(jsonpathlexerLexerInit)
 }
 
@@ -167,13 +166,13 @@ func NewJsonpathLexer(input antlr.CharStream) *JsonpathLexer {
 	JsonpathLexerInit()
 	l := new(JsonpathLexer)
 	l.BaseLexer = antlr.NewBaseLexer(input)
-	staticData := &jsonpathlexerLexerStaticData
-	l.Interpreter = antlr.NewLexerATNSimulator(l, staticData.atn, staticData.decisionToDFA, staticData.predictionContextCache)
-	l.channelNames = staticData.channelNames
-	l.modeNames = staticData.modeNames
-	l.RuleNames = staticData.ruleNames
-	l.LiteralNames = staticData.literalNames
-	l.SymbolicNames = staticData.symbolicNames
+	staticData := &JsonpathLexerLexerStaticData
+	l.Interpreter = antlr.NewLexerATNSimulator(l, staticData.atn, staticData.decisionToDFA, staticData.PredictionContextCache)
+	l.channelNames = staticData.ChannelNames
+	l.modeNames = staticData.ModeNames
+	l.RuleNames = staticData.RuleNames
+	l.LiteralNames = staticData.LiteralNames
+	l.SymbolicNames = staticData.SymbolicNames
 	l.GrammarFileName = "Jsonpath.g4"
 	// TODO: l.EOF = antlr.TokenEOF
 
