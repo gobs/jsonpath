@@ -12,13 +12,13 @@ func main() {
 	}
 
 	// loaded from JSON
-	input := map[string]interface{}{
+	input := map[string]any{
 		"name": "joe",
-		"items": []interface{}{
+		"items": []any{
 			"zero",
 			"one",
 			"two",
-			map[string]interface{}{
+			map[string]any{
 				"stuff": "three",
 			},
 		},

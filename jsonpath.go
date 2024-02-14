@@ -21,8 +21,8 @@ const (
 	Flat     ProcessOptions = 4
 )
 
-type map_type = map[string]interface{}
-type array_type = []interface{}
+type map_type = map[string]any
+type array_type = []any
 type set_type map[string]struct{}
 
 func (s set_type) Set(v string) {
@@ -60,7 +60,7 @@ func asFloat(t antlr.Token, val float64) float64 {
 	return val
 }
 
-func toInt(v interface{}) int {
+func toInt(v any) int {
 	switch t := v.(type) {
 	case int:
 		return t
@@ -76,7 +76,7 @@ func toInt(v interface{}) int {
 	return 0
 }
 
-func toFloat(v interface{}) float64 {
+func toFloat(v any) float64 {
 	switch t := v.(type) {
 	case int:
 		return float64(t)
@@ -92,7 +92,7 @@ func toFloat(v interface{}) float64 {
 	return 0.0
 }
 
-func toBool(v interface{}) bool {
+func toBool(v any) bool {
 	switch t := v.(type) {
 	case bool:
 		return t
@@ -109,7 +109,7 @@ func toBool(v interface{}) bool {
 	return false
 }
 
-func toString(v interface{}) string {
+func toString(v any) string {
 	return fmt.Sprintf("%v", v)
 }
 
@@ -132,14 +132,14 @@ const (
 )
 
 // Operation is a method that perform an operation (conditional or not)
-type Operation func(v interface{}) interface{}
+type Operation func(v any) any
 
 // Node defines a processing node
 type Node struct {
 	nodeType nodeType
 
-	opId    string      // for DESCENDANT/FILTER_EXPR/SCRIPT_EXPR
-	opValue interface{} // for FILTER_EXPR/SCRIPT_EXPR
+	opId    string // for DESCENDANT/FILTER_EXPR/SCRIPT_EXPR
+	opValue any    // for FILTER_EXPR/SCRIPT_EXPR
 	op      Operation
 	opNot   bool   // for FILTER_EXPR, negate the result
 	opName  string // used for debugging
@@ -180,11 +180,11 @@ func (n Node) String() string {
 	return "UNKNOWN"
 }
 
-func (n *Node) CompareExists(v interface{}) interface{} {
+func (n *Node) CompareExists(v any) any {
 	return true
 }
 
-func (n *Node) CompareEqual(v interface{}) interface{} {
+func (n *Node) CompareEqual(v any) any {
 	switch t := v.(type) {
 	case bool:
 		return t == toBool(n.opValue)
@@ -202,7 +202,7 @@ func (n *Node) CompareEqual(v interface{}) interface{} {
 	return false
 }
 
-func (n *Node) CompareNotEqual(v interface{}) interface{} {
+func (n *Node) CompareNotEqual(v any) any {
 	switch t := v.(type) {
 	case bool:
 		return t != toBool(n.opValue)
@@ -220,7 +220,7 @@ func (n *Node) CompareNotEqual(v interface{}) interface{} {
 	return false
 }
 
-func (n *Node) CompareGreater(v interface{}) interface{} {
+func (n *Node) CompareGreater(v any) any {
 	switch t := v.(type) {
 	case bool:
 		return t == true && toBool(n.opValue) == false
@@ -238,7 +238,7 @@ func (n *Node) CompareGreater(v interface{}) interface{} {
 	return false
 }
 
-func (n *Node) CompareLess(v interface{}) interface{} {
+func (n *Node) CompareLess(v any) any {
 	switch t := v.(type) {
 	case bool:
 		return t == false && toBool(n.opValue) == true
@@ -256,7 +256,7 @@ func (n *Node) CompareLess(v interface{}) interface{} {
 	return false
 }
 
-func (n *Node) CompareGreaterEqual(v interface{}) interface{} {
+func (n *Node) CompareGreaterEqual(v any) any {
 	switch t := v.(type) {
 	case bool:
 		return t == true || t == toBool(n.opValue)
@@ -274,7 +274,7 @@ func (n *Node) CompareGreaterEqual(v interface{}) interface{} {
 	return false
 }
 
-func (n *Node) CompareLessEqual(v interface{}) interface{} {
+func (n *Node) CompareLessEqual(v any) any {
 	switch t := v.(type) {
 	case bool:
 		return t == false || t == toBool(n.opValue)
@@ -292,11 +292,11 @@ func (n *Node) CompareLessEqual(v interface{}) interface{} {
 	return false
 }
 
-func (n *Node) CompareMatch(v interface{}) interface{} {
+func (n *Node) CompareMatch(v any) any {
 	return n.opValue.(*regexp.Regexp).MatchString(toString(v))
 }
 
-func (n *Node) ValueAdd(v interface{}) interface{} {
+func (n *Node) ValueAdd(v any) any {
 	switch t := v.(type) {
 	case int:
 		return t + toInt(n.opValue)
@@ -308,7 +308,7 @@ func (n *Node) ValueAdd(v interface{}) interface{} {
 	return false
 }
 
-func (n *Node) ValueSub(v interface{}) interface{} {
+func (n *Node) ValueSub(v any) any {
 	switch t := v.(type) {
 	case int:
 		return t - toInt(n.opValue)
@@ -320,7 +320,7 @@ func (n *Node) ValueSub(v interface{}) interface{} {
 	return false
 }
 
-func (n *Node) ValueMul(v interface{}) interface{} {
+func (n *Node) ValueMul(v any) any {
 	switch t := v.(type) {
 	case int:
 		return t * toInt(n.opValue)
@@ -332,7 +332,7 @@ func (n *Node) ValueMul(v interface{}) interface{} {
 	return false
 }
 
-func (n *Node) ValueDiv(v interface{}) interface{} {
+func (n *Node) ValueDiv(v any) any {
 	switch t := v.(type) {
 	case int:
 		return t / toInt(n.opValue)
@@ -594,15 +594,15 @@ func (p *Processor) Parse(expr string) bool {
 	return !p.errors
 }
 
-func (p *Processor) find(names set_type, j interface{}, enhanced, flat bool) (ret []interface{}) {
+func (p *Processor) find(names set_type, j any, enhanced, flat bool) (ret []any) {
 	if flat {
 		fmt.Println("find", names.List(), j)
 	}
 
-	var a []interface{}
+	var a []any
 
 	addele := true
-	any := names.Contains(TOKEN_ANY) || len(names) == 0
+	anyOrNone := names.Contains(TOKEN_ANY) || len(names) == 0
 
 	if aj, ok := j.(array_type); ok {
 		a = aj
@@ -612,7 +612,7 @@ func (p *Processor) find(names set_type, j interface{}, enhanced, flat bool) (re
 	}
 
 	for _, c := range a {
-		if addele && any {
+		if addele && anyOrNone {
 			ret = append(ret, c)
 		}
 
@@ -622,7 +622,7 @@ func (p *Processor) find(names set_type, j interface{}, enhanced, flat bool) (re
 			mret := map_type{}
 			aret := array_type{}
 
-			addresult := func(k string, v interface{}) {
+			addresult := func(k string, v any) {
 				if enhanced && l > 1 {
 					mret[k] = v
 				} else if flat {
@@ -633,7 +633,7 @@ func (p *Processor) find(names set_type, j interface{}, enhanced, flat bool) (re
 			}
 
 			for k, v := range t {
-				if names.Contains(k) || any {
+				if names.Contains(k) || anyOrNone {
 					addresult(k, v)
 				}
 
@@ -667,7 +667,7 @@ func (p *Processor) find(names set_type, j interface{}, enhanced, flat bool) (re
 	return ret
 }
 
-func atIndex(i int, a array_type) (interface{}, bool) {
+func atIndex(i int, a array_type) (any, bool) {
 	l := len(a)
 
 	if i < 0 {
@@ -681,7 +681,7 @@ func atIndex(i int, a array_type) (interface{}, bool) {
 	return nil, false
 }
 
-func getLength(v interface{}) interface{} {
+func getLength(v any) any {
 	switch t := v.(type) {
 	case map_type:
 		return len(t)
@@ -693,7 +693,7 @@ func getLength(v interface{}) interface{} {
 }
 
 // Process input object according to parsed JsonPath
-func (p *Processor) Process(v interface{}, options ProcessOptions) interface{} {
+func (p *Processor) Process(v any, options ProcessOptions) any {
 	if p.errors {
 		return nil
 	}
@@ -766,7 +766,7 @@ func (p *Processor) Process(v interface{}, options ProcessOptions) interface{} {
 					l := len(n.names)
 					mres := map_type{}
 
-					addresult := func(k string, v interface{}) {
+					addresult := func(k string, v any) {
 						if enhanced && l > 1 {
 							mres[k] = v
 						} else {
